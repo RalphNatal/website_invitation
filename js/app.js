@@ -29,7 +29,12 @@
   };
 
   const TALLY_EMBED = 'https://tally.so/embed/GxGARj';
+  const TALLY_WIDGET = 'https://tally.so/widgets/embed.js';
   const STORAGE_KEY = 'cantu.guestName';
+
+  /* Letters (any script), combining marks, apostrophes, spaces and hyphens; 1–40. */
+  const NAME_PATTERN = /^[\p{L}\p{M}' -]{1,40}$/u;
+  const NAME_SCALE_FROM = 12;   /* names longer than this step the hero size down */
 
 
   /* ------------------------------------------------------------------------
@@ -69,6 +74,13 @@
       const heading = next.querySelector('[tabindex="-1"]');
       if (heading) heading.focus({ preventScroll: true });
     }
+
+    afterShow(name);
+  }
+
+  /* Per-screen work that must wait until the section is actually visible. */
+  function afterShow(name) {
+    if (name === 'assess') initTally();
   }
 
 
@@ -156,6 +168,156 @@
 
 
   /* ------------------------------------------------------------------------
+     Guest name — untrusted input. It reaches the DOM only via textContent
+     and the Tally URL only via encodeURIComponent.
+     ------------------------------------------------------------------------ */
+
+  let guestName = '';
+
+  /* Trim, collapse runs of whitespace, and straighten the curly apostrophes
+     iOS types by default so "O’Neil" passes the same rule as "O'Neil". */
+  function normalizeName(raw) {
+    return String(raw || '')
+      .replace(/[‘’]/g, "'")
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function isValidName(value) {
+    return NAME_PATTERN.test(value);
+  }
+
+  /* "maria cristina" → "Maria Cristina", "o'neil" → "O'Neil", "jean-luc" → "Jean-Luc" */
+  function titleCase(value) {
+    return value.toLowerCase().replace(/(^|[ '-])(\p{L})/gu, function (match, sep, letter) {
+      return sep + letter.toUpperCase();
+    });
+  }
+
+  function readStoredName() {
+    try {
+      return sessionStorage.getItem(STORAGE_KEY);
+    } catch (error) {
+      return null;   /* private-mode Safari throws here */
+    }
+  }
+
+  function storeName(name) {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, name);
+    } catch (error) {
+      /* Storage unavailable — the name still lives in memory for this visit. */
+    }
+  }
+
+  function setGuestName(name) {
+    guestName = name;
+    const target = document.getElementById('guest-name');
+    if (!target) return;
+
+    target.textContent = name + ',';
+
+    /* Long names step the hero size down in proportion so the card never breaks. */
+    const scale = name.length > NAME_SCALE_FROM ? NAME_SCALE_FROM / name.length : 1;
+    target.style.setProperty('--name-scale', String(Math.max(scale, 0.55)));
+  }
+
+  /* Page 1 form: validate, store, advance. */
+  function initGate() {
+    const form = document.getElementById('gate-form');
+    const field = document.getElementById('gate-field');
+    const input = document.getElementById('guest-input');
+    const hint = document.getElementById('gate-hint');
+
+    function clearHint() {
+      hint.textContent = '';
+      field.classList.remove('is-invalid');
+      input.removeAttribute('aria-invalid');
+    }
+
+    input.addEventListener('input', clearHint);
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const candidate = normalizeName(input.value);
+      if (!isValidName(candidate)) {
+        hint.textContent = 'Enter the name on your invitation.';
+        field.classList.add('is-invalid');
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+        return;
+      }
+
+      const name = titleCase(candidate);
+      storeName(name);
+      setGuestName(name);
+      showScreen('invite');
+    });
+  }
+
+  /* Name from ?name= wins, then sessionStorage. Both go through the same rule. */
+  function resolveInitialName() {
+    let fromUrl = null;
+    try {
+      fromUrl = new URLSearchParams(window.location.search).get('name');
+    } catch (error) {
+      fromUrl = null;
+    }
+
+    const linked = normalizeName(fromUrl);
+    if (linked && isValidName(linked)) return titleCase(linked);
+
+    const stored = normalizeName(readStoredName());
+    if (stored && isValidName(stored)) return stored;
+
+    return '';
+  }
+
+
+  /* ------------------------------------------------------------------------
+     Tally — the src is built here so the guest's name is in it before the
+     widget script runs. Loaded once, the first time Page 3 is shown.
+     ------------------------------------------------------------------------ */
+
+  let tallyStarted = false;
+
+  function initTally() {
+    if (tallyStarted) return;
+    tallyStarted = true;
+
+    const frame = document.getElementById('tally-frame');
+    if (!frame) return;
+
+    let src = TALLY_EMBED + '?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1';
+    if (guestName) src += '&name=' + encodeURIComponent(guestName);
+    frame.setAttribute('data-tally-src', src);
+
+    /* dynamicHeight arrives by postMessage once the form is up. If the frame
+       is still at its initial height a while after loading, give it a fixed
+       minimum rather than a nested scrollbar. */
+    frame.addEventListener('load', function () {
+      setTimeout(function () {
+        if (frame.offsetHeight < 260) frame.classList.add('tally__frame--fixed');
+      }, 3000);
+    }, { once: true });
+
+    const script = document.createElement('script');
+    script.src = TALLY_WIDGET;
+    script.async = true;
+    script.onload = function () {
+      if (window.Tally && typeof window.Tally.loadEmbeds === 'function') window.Tally.loadEmbeds();
+    };
+    script.onerror = function () {
+      /* Widget blocked: load the form directly, at the fixed height. */
+      frame.src = src;
+      frame.classList.add('tally__frame--fixed');
+    };
+    document.body.appendChild(script);
+  }
+
+
+  /* ------------------------------------------------------------------------
      Init
      ------------------------------------------------------------------------ */
 
@@ -168,13 +330,7 @@
     renderProducts();
     document.querySelectorAll('img[data-guard]').forEach(guardImage);
 
-    /* Page 1: Enter in the input or the Reveal link both submit this form.
-       Validation and name handling arrive in checkpoint 3. */
-    const gateForm = document.getElementById('gate-form');
-    gateForm.addEventListener('submit', function (event) {
-      event.preventDefault();
-      showScreen('invite');
-    });
+    initGate();
 
     /* Any [data-goto] control advances to the named screen. */
     document.querySelectorAll('[data-goto]').forEach(function (control) {
@@ -184,7 +340,14 @@
       });
     });
 
-    showScreen('gate', { focus: false });
+    const name = resolveInitialName();
+    if (name) {
+      storeName(name);
+      setGuestName(name);
+      showScreen('invite', { focus: false });
+    } else {
+      showScreen('gate', { focus: false });
+    }
   }
 
   if (document.readyState === 'loading') {
