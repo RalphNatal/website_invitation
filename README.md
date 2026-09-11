@@ -2,7 +2,7 @@
 
 A single-page, three-screen invitation for the Cantu Collective event. A guest
 signs their name on the gate, the invitation unfolds, and the assessment page
-carries the guest flow, the hair cocktail products, and the way into the
+carries the four-step journey, the hair cocktail products, and the way into the
 hair assessment — a QR code, plus a link for desktop — with their name
 already in the URL.
 
@@ -30,7 +30,7 @@ entering a name, close the tab (the name lives in `sessionStorage`, key
 ## Files
 
 ```
-index.html        three <section> screens, all copy, inline SVG (corner sprigs, flow icons)
+index.html        three <section> screens, all copy, inline SVG (corner sprigs, journey icons)
 css/style.css     tokens, reset, type roles, screens, content, motion
 js/app.js         PRODUCTS / EVENT config, screen toggle, guest-list gate, motion
 js/guests.js      the invite list (window.CANTU_GUESTS) — loaded before app.js
@@ -68,7 +68,7 @@ All editable content is at the top of `js/app.js`:
 - `ASSESSMENT_URL` — the Tally form URL. The guest's name is appended as
   `?name=` (URL-encoded) to the "Open the assessment" link on Page 3.
 
-Everything else — the Page 2 card copy, the five guest-flow steps, the panel —
+Everything else — the Page 2 card copy, the four journey steps, the panel —
 is plain text in `index.html`.
 
 The invite list is deliberately separate: `js/guests.js` (see "The guest

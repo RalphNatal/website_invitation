@@ -564,7 +564,7 @@ dd { margin: 0; }
 }
 
 
-/* 6c. Page 3 — flow, cocktail, panel --------------------------------------- */
+/* 6c. Page 3 — journey, cocktail, panel ----------------------------------- */
 
 .screen--assess {
   padding-bottom: 0;   /* the panel runs to the bottom edge */
@@ -581,98 +581,102 @@ dd { margin: 0; }
   row-gap: var(--space-7);
 }
 
-/* The guest flow */
+/* The journey — a column at every width, never a row */
 
-.flow {
-  position: relative;
+.journey {
+  --journey-col:  72px;              /* the icon column */
+  --journey-icon: 56px;              /* the circle inside it */
+  --journey-gap:  var(--space-6);    /* between steps; the connector spans it */
+
   display: grid;
-  row-gap: var(--space-6);
+  row-gap: var(--journey-gap);
   width: 100%;
-  max-width: 24rem;
-}
-
-.flow::before {
-  content: "";
-  position: absolute;
-  top: 28px;
-  bottom: 28px;
-  left: 28px;
-  width: 1px;
-  background: var(--blush);
-}
-
-.flow__step {
-  position: relative;
-  display: grid;
-  grid-template-columns: 56px 1fr;
-  column-gap: var(--space-4);
-  align-items: start;
+  max-width: 34rem;
   text-align: left;
 }
 
-.flow__icon {
+.journey__step {
+  position: relative;
   display: grid;
-  place-items: center;
-  width: 56px;
-  height: 56px;
-  border: 1px solid var(--blush);
-  border-radius: 50%;
-  background: var(--sand);
-  color: var(--rust-bright);
+  grid-template-columns: var(--journey-col) 1fr;
+  column-gap: var(--space-4);
+  align-items: start;
 }
 
-.flow__icon svg {
+/* Connector: from the bottom of this circle to the top of the next, ending
+   in a chevron. Drawn per step (not on the list) so the last step never
+   trails a line, and layered beneath the circle. */
+.journey__step:not(:last-child)::before,
+.journey__step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--journey-col) / 2);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.journey__step:not(:last-child)::before {
+  top: var(--journey-icon);
+  bottom: calc(3px - var(--journey-gap));
+  width: 1px;
+  transform: translateX(-50%);
+  background: var(--blush);
+}
+
+.journey__step:not(:last-child)::after {
+  bottom: calc(5px - var(--journey-gap));
+  width: 7px;
+  height: 7px;
+  border-right: 1px solid var(--blush);
+  border-bottom: 1px solid var(--blush);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.journey__icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--journey-icon);
+  height: var(--journey-icon);
+  margin-inline: auto;
+  border: 1px solid var(--blush);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--rust);
+}
+
+.journey__icon svg {
   width: 24px;
   height: 24px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.25;
+  stroke-width: 1.2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.flow__text {
+.journey__text {
   display: grid;
-  row-gap: var(--space-1);
-  padding-top: var(--space-3);
+  row-gap: var(--space-2);
 }
 
-.flow__title { color: var(--rust); }
-
-.flow__copy {
-  max-width: 22ch;
-  font-size: var(--text--1);
-  font-weight: 400;
+.journey__num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-3);
+  line-height: 1;
   color: var(--rust);
 }
 
-@media (min-width: 768px) {
-  .flow {
-    grid-template-columns: repeat(5, 1fr);
-    column-gap: var(--space-3);
-    max-width: none;
-  }
+.journey__title { color: var(--rust-bright); }
 
-  .flow::before {
-    top: 28px;
-    bottom: auto;
-    left: 10%;
-    right: 10%;
-    width: auto;
-    height: 1px;
-  }
-
-  .flow__step {
-    grid-template-columns: none;
-    justify-items: center;
-    row-gap: var(--space-2);
-    text-align: center;
-  }
-
-  .flow__text {
-    justify-items: center;
-    padding-top: var(--space-2);
-  }
+.journey__copy {
+  max-width: 26ch;
+  font-size: var(--text--1);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  color: var(--rust);
 }
 
 /* Your hair cocktail */

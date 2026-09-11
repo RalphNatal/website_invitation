@@ -115,53 +115,49 @@
     <section class="screen screen--assess" id="screen-assess" aria-labelledby="assess-title" hidden>
       <div class="screen__inner">
 
-        <!-- a) The guest flow -->
+        <!-- a) The journey — a column at every width. The <ol> already tells
+             assistive tech "1 of 4", so the printed numerals are decorative. -->
         <div class="block">
-          <h1 class="display block__title" id="assess-title" tabindex="-1" data-reveal>The guest flow</h1>
-          <ol class="flow" role="list">
-            <li class="flow__step" data-reveal>
-              <span class="flow__icon" aria-hidden="true">
+          <h1 class="display block__title" id="assess-title" tabindex="-1" data-reveal>The journey</h1>
+          <ol class="journey" role="list">
+            <li class="journey__step" data-reveal>
+              <span class="journey__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false"><path d="M3.5 6.5h17v11h-17z"/><path d="M3.5 7l8.5 6.5L20.5 7"/></svg>
               </span>
-              <div class="flow__text">
-                <h2 class="label flow__title">Invitation arrives</h2>
-                <p class="flow__copy">Guest receives a curated &ldquo;Hair Prescription&rdquo; invite with a QR code to begin their journey.</p>
+              <div class="journey__text">
+                <span class="journey__num" aria-hidden="true">1</span>
+                <h2 class="label journey__title">You&rsquo;re invited</h2>
+                <p class="journey__copy">Receive your exclusive digital invitation to The Cantu Collective.</p>
               </div>
             </li>
-            <li class="flow__step" data-reveal>
-              <span class="flow__icon" aria-hidden="true">
+            <li class="journey__step" data-reveal>
+              <span class="journey__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false"><path d="M9 4.5h6V7H9z"/><path d="M15 5.5h3.5v14h-13v-14H9"/><path d="M9 11.5h6M9 15h4"/></svg>
               </span>
-              <div class="flow__text">
-                <h2 class="label flow__title">Hair profile survey</h2>
-                <p class="flow__copy">Guest completes a beautiful, engaging survey that captures their hair needs, goals, and preferences.</p>
+              <div class="journey__text">
+                <span class="journey__num" aria-hidden="true">2</span>
+                <h2 class="label journey__title">Complete your hair profile</h2>
+                <p class="journey__copy">Answer a few questions so we can get to know your hair, your journey, and your goals.</p>
               </div>
             </li>
-            <li class="flow__step" data-reveal>
-              <span class="flow__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false"><path d="M4.5 4.5h15L12 13z"/><path d="M12 13v6.5M8 19.5h8"/><path d="M7.5 8h9"/></svg>
+            <li class="journey__step" data-reveal>
+              <span class="journey__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M11 5c.4 4.6 3.4 7.6 8 8-4.6.4-7.6 3.4-8 8-.4-4.6-3.4-7.6-8-8 4.6-.4 7.6-3.4 8-8z"/><path d="M18.5 3v4M16.5 5h4"/></svg>
               </span>
-              <div class="flow__text">
-                <h2 class="label flow__title">Personalized results</h2>
-                <p class="flow__copy">Guest unlocks their personalized Hair Cocktail and Signature Cocktail Pairing.</p>
+              <div class="journey__text">
+                <span class="journey__num" aria-hidden="true">3</span>
+                <h2 class="label journey__title">Discover your matches</h2>
+                <p class="journey__copy">Unlock your personalized Hair Cocktail + Signature Cocktail Pairing.</p>
               </div>
             </li>
-            <li class="flow__step" data-reveal>
-              <span class="flow__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false"><path d="M4 6.5h16v13H4z"/><path d="M4 10.5h16M8 4.5V8M16 4.5V8"/><path d="M12 15h.01"/></svg>
+            <li class="journey__step" data-reveal>
+              <span class="journey__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M8 4.5h8a1 1 0 0 1 1 1v6H7v-6a1 1 0 0 1 1-1z"/><path d="M5.5 11.5h13v3h-13z"/><path d="M12 14.5v5M7.5 19.5h9"/></svg>
               </span>
-              <div class="flow__text">
-                <h2 class="label flow__title">Event confirmation</h2>
-                <p class="flow__copy">Guest receives event details + calendar invite. We&rsquo;ll have their Hair Prescription ready.</p>
-              </div>
-            </li>
-            <li class="flow__step" data-reveal>
-              <span class="flow__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false"><path d="M7 4.5h10v8H7z"/><path d="M5 12.5h14v3H5z"/><path d="M6.5 15.5v4M17.5 15.5v4"/></svg>
-              </span>
-              <div class="flow__text">
-                <h2 class="label flow__title">At the event</h2>
-                <p class="flow__copy">Guest arrives to a personalized experience based on their Hair Prescription.</p>
+              <div class="journey__text">
+                <span class="journey__num" aria-hidden="true">4</span>
+                <h2 class="label journey__title">We&rsquo;ll see you there</h2>
+                <p class="journey__copy">Your personalized Hair Prescription will be ready at your styling station.</p>
               </div>
             </li>
           </ol>
