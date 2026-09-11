@@ -271,8 +271,23 @@ body[data-screen="gate"] { background: var(--rust-deep); }
 
 .gate__logo { font: inherit; }
 
+/* Wordmark, "Hair Prescription", leaf — one lockup, so it sits tighter than
+   the rest of the gate column. */
+.gate__lockup {
+  display: grid;
+  justify-items: center;
+  row-gap: var(--space-3);
+  
+}
+
+.gate__tagline { 
+  color: var(--ink-light);
+  height: 2rem;
+  width: auto;
+}
+
 .gate__logo-img {
-  height: 3.25rem;   /* fixed box so the layout is stable before the SVG arrives */
+  height: 3.25rem;  
   width: auto;
 }
 
@@ -373,7 +388,7 @@ hr.rule {
 dd { margin: 0; }
 
 
-/* 6a. Page 1 — paper, sprigs, input --------------------------------------- */
+/* 6a. Page 1 — paper, lockup, input ---------------------------------------- */
 
 .screen--gate {
   position: relative;
@@ -383,27 +398,13 @@ dd { margin: 0; }
 
 .gate__content { position: relative; z-index: 2; }
 
-.sprig {
-  position: absolute;
-  z-index: 1;   /* above the paper, below the content */
-  width: 96px;
-  height: 96px;
-  pointer-events: none;
-  transform: rotate(var(--sprig-rot, 0deg));
-}
-
-.sprig__art {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  transform-origin: 0 0;
-}
-
 /* The leaf art is dark, and dark on --rust-deep is close to invisible. As a
    mask its colour is thrown away and only its alpha is kept, painted cream —
    whatever colour the file was exported in. */
 .gate__leaf {
+  display: block;
+  width: 56px;
+  height: 56px;
   background-color: var(--cream);
   -webkit-mask-image: url("../assets/leaf.png");
           mask-image: url("../assets/leaf.png");
@@ -413,26 +414,14 @@ dd { margin: 0; }
           mask-repeat: no-repeat;
   -webkit-mask-position: center;
           mask-position: center;
-  opacity: 0.6;
+  opacity: 0.85;
 }
 
 /* Without mask support the leaf would be a cream block: show nothing instead */
 @supports not ((mask-image: url("")) or (-webkit-mask-image: url(""))) {
-  .sprig { display: none; }
+  .gate__leaf { display: none; }
 }
 
-.sprig--tl { top: 14px; left: 14px; }
-.sprig--tr { top: 14px; right: 14px; --sprig-rot: 90deg; }
-.sprig--br { bottom: 14px; right: 14px; --sprig-rot: 180deg; }
-.sprig--bl { bottom: 14px; left: 14px; --sprig-rot: 270deg; }
-
-@media (min-width: 768px) {
-  .sprig { width: 140px; height: 140px; }
-  .sprig--tl { top: 24px; left: 24px; }
-  .sprig--tr { top: 24px; right: 24px; }
-  .sprig--br { bottom: 24px; right: 24px; }
-  .sprig--bl { bottom: 24px; left: 24px; }
-}
 
 .gate__field {
   position: relative;
@@ -623,12 +612,12 @@ dd { margin: 0; }
 
 .screen--assess .screen__inner {
   display: grid;
-  row-gap: var(--space-9);
+  row-gap: var(--space-7);
 }
 
 .assess__content {
   display: grid;
-  row-gap: var(--space-9);
+  row-gap: var(--space-7);
 }
 
 /* The column's gutter, now that the screen has none */
@@ -640,7 +629,7 @@ dd { margin: 0; }
 .block {
   display: grid;
   justify-items: center;
-  row-gap: var(--space-7);
+  row-gap: var(--space-5);
 }
 
 /* The journey — a column at every width, never a row */
@@ -648,7 +637,7 @@ dd { margin: 0; }
 .journey {
   --journey-col:  72px;              /* the icon column */
   --journey-icon: 56px;              /* the circle inside it */
-  --journey-gap:  var(--space-6);    /* between steps; the connector spans it */
+  --journey-gap:  var(--space-5);    /* between steps; the connector spans it */
 
   display: grid;
   row-gap: var(--journey-gap);
@@ -721,7 +710,7 @@ dd { margin: 0; }
 
 .journey__text {
   display: grid;
-  row-gap: var(--space-2);
+  row-gap: var(--space-1);
 }
 
 .journey__num {
@@ -831,6 +820,7 @@ dd { margin: 0; }
   grid-template-columns: 1fr;
   width: 100%;
   text-align: left;
+  padding-bottom: 2rem;
 }
 
 .product {
@@ -1000,9 +990,9 @@ dd { margin: 0; }
 /* The panel */
 
 .panel {
-  margin-top: var(--space-9);
-  margin-inline: 0;   /* the screen has no side padding; nothing to break out of */
-  padding: var(--space-8) var(--gutter);
+  /* margin-top: var(--space-9); */
+  margin-inline: 0;  
+  padding: var(--space-4) var(--gutter);
   background: var(--rust-deep);
   color: var(--ink-light);
   -webkit-font-smoothing: antialiased;
@@ -1012,7 +1002,7 @@ dd { margin: 0; }
 .panel__inner {
   display: grid;
   justify-items: center;
-  row-gap: var(--space-5);
+  row-gap: var(--space-1);
 }
 
 .panel__title { max-width: 14ch; }
@@ -1133,22 +1123,6 @@ dd { margin: 0; }
     to   { background-position: 80% 70%; }
   }
 
-  /* Corner sprigs sway from their root, each on its own clock */
-  .sprig__art {
-    animation: sprig-sway var(--sway-dur, 14s) ease-in-out infinite alternate;
-    animation-delay: var(--sway-delay, 0s);
-  }
-
-  .sprig--tl .sprig__art { --sway-dur: 14s; --sway-delay: 0s; }
-  .sprig--tr .sprig__art { --sway-dur: 16s; --sway-delay: -5s; }
-  .sprig--br .sprig__art { --sway-dur: 12s; --sway-delay: -9s; }
-  .sprig--bl .sprig__art { --sway-dur: 15s; --sway-delay: -3s; }
-
-  @keyframes sprig-sway {
-    from { transform: rotate(-1.5deg) translate(0, 0); }
-    to   { transform: rotate(1.5deg) translate(1px, 1.5px); }
-  }
-
 
   /* 7b. Input focus -------------------------------------------------------- */
 
@@ -1216,7 +1190,7 @@ dd { margin: 0; }
     min-height: 0;
   }
 
-  .gate-fold .sprig__art,
+
   .gate-fold .screen--gate::after { animation: none; }
 
   /* Page 2 waits beneath the doors, slightly small, and settles as they open */
