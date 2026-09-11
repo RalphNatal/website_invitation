@@ -776,7 +776,7 @@ dd { margin: 0; }
 
 .cocktail__label { color: var(--taupe); }
 
-/* The one-line range intro (see the TODO in index.html) */
+/* The one-line range intro under the heading */
 .cocktail__copy {
   max-width: 34ch;
   font-weight: 300;

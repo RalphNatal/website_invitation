@@ -14,30 +14,19 @@
      'bottle' | 'jar' | 'jar-wide' | 'tube'.
      ------------------------------------------------------------------------ */
 
-  /* Previous line — Ultra Moisture */
-  // const PRODUCTS = [
-  //   { caption: 'Cleanse', name: 'Ultra Moisture Nourishing Shampoo',              src: 'assets/products/cleanse.png', shape: 'bottle' },
-  //   { caption: 'Restore', name: 'Ultra Moisture Nourishing Mask',                 src: 'assets/products/restore.png', shape: 'jar' },
-  //   { caption: 'Define',  name: 'Ultra Moisture Nourishing Curling Cream',        src: 'assets/products/define.png',  shape: 'jar' },
-  //   { caption: 'Protect', name: 'Ultra Moisture Nourishing Leave-In Conditioner', src: 'assets/products/protect.png', shape: 'tube' }
-  // ];
-
   const PRODUCTS = [
-    { name: 'Cantu Shea Butter Hydrating Cream Conditioner',
-      blurb: 'Deeply moisturizes and helps strengthen strands while reducing breakage.',
-      src: 'assets/products/hydrating-conditioner.png', shape: 'bottle' },
-    { name: 'Cantu Shea Butter for Natural Curls Curl Activator Cream',
-      blurb: 'Enhances curl pattern, adds definition, and reduces frizz.',
-      src: 'assets/products/curl-activator.png', shape: 'jar' },
-    { name: 'Cantu Shea Butter Coconut Curling Cream',
-      blurb: 'Moisturizes and defines curls with long-lasting hold and shine.',
-      src: 'assets/products/coconut-curling-cream.png', shape: 'jar' },
-    { name: 'Cantu Shea Butter Moisturizing Twist & Lock Gel',
-      blurb: 'Controls frizz and helps hold styles in place.',
-      src: 'assets/products/twist-lock-gel.png', shape: 'jar-wide' },
-    { name: 'Cantu Shea Butter Nourishing Shampoo',
-      blurb: 'Gentle cleanse that removes buildup while restoring natural moisture.',
-      src: 'assets/products/nourishing-shampoo.png', shape: 'bottle' }
+    { name: 'Cantu Ultra Moisture Nourishing Curl Cream',
+      blurb: 'Defines and hydrates curls while smoothing frizz, boosting shine, and providing a soft, flexible hold.',
+      src: 'assets/products/curl-cream.png', shape: 'jar' },
+    { name: 'Cantu Ultra Moisture Nourishing Mask',
+      blurb: 'Deeply nourishes dry curls while restoring softness, strengthening strands, and reducing breakage.',
+      src: 'assets/products/mask.png', shape: 'jar' },
+    { name: 'Cantu Ultra Moisture Nourishing Shampoo',
+      blurb: 'Gently cleanses without stripping moisture while strengthening strands and leaving curls soft and hydrated.',
+      src: 'assets/products/shampoo.png', shape: 'bottle' },
+    { name: 'Cantu Ultra Moisture Nourishing Leave-In Conditioner',
+      blurb: 'Provides lightweight, lasting hydration while smoothing frizz, strengthening strands, and enhancing shine.',
+      src: 'assets/products/leave-in-conditioner.png', shape: 'bottle' }
   ];
 
   const EVENT = {
