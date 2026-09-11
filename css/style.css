@@ -553,7 +553,7 @@ dd { margin: 0; }
 }
 
 .guest-name {
-  font-size: calc(clamp(2.5rem, 14vw, 3.815rem) * var(--name-scale, 1));
+  font-size: calc(clamp(2rem, 11vw, var(--text-5)) * var(--name-scale, 1));
   line-height: 1.15;
   overflow-wrap: anywhere;
   padding-inline: 0.15em;   /* Great Vibes swashes overhang the em box */
