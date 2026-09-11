@@ -496,7 +496,7 @@ dd { margin: 0; }
 
 .gate__field:focus-within .gate__underline { opacity: 1; }
 
-.gate__field.is-invalid .gate__input { border-bottom-color: var(--rust-bright); }
+.gate__field.is-invalid .gate__input { border-bottom-color: var(--blush); }
 
 .gate__hint {
   min-height: calc(var(--text--1) * var(--leading-body));
@@ -506,10 +506,11 @@ dd { margin: 0; }
   letter-spacing: 0.04em;
 }
 
-/* Guest-list miss: the message and the underline both turn rust-bright.
+/* Guest-list miss: the message and the underline both turn blush — the one
+   palette swatch that reads on --rust-deep (rust-bright all but vanishes).
    Character-rule failures keep the taupe message (.is-invalid on the field). */
-.gate__hint--miss .gate__hint-line { color: var(--rust-bright); }
-.gate__field.is-miss .gate__input { border-bottom-color: var(--rust-bright); }
+.gate__hint--miss .gate__hint-line { color: var(--blush); font-weight: 400; }
+.gate__field.is-miss .gate__input { border-bottom-color: var(--blush); }
 
 /* After three consecutive misses, a quieter second line */
 .gate__hint-line--quiet,
