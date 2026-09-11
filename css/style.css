@@ -301,3 +301,519 @@ body[data-screen="gate"] { background: var(--rust-deep); }
 .screen--assess {
   background: var(--sand);
 }
+
+
+/* --------------------------------------------------------------------------
+   6. Content — extends the screens above. Everything here is additive.
+   -------------------------------------------------------------------------- */
+
+.svg-defs { position: absolute; }
+
+/* Display scales up one step once there is room for it */
+.display { font-size: var(--text-3); }
+
+@media (min-width: 480px) {
+  .display { font-size: var(--text-4); }
+}
+
+/* Sentence-case display, with one word in italic */
+.display--sentence {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.display--sentence em {
+  font-style: italic;
+  font-weight: 700;
+}
+
+hr.rule {
+  width: 40%;
+  height: 0;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--blush);
+}
+
+dd { margin: 0; }
+
+
+/* 6a. Page 1 — sprigs, grain, input --------------------------------------- */
+
+.screen--gate {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.gate__content { position: relative; z-index: 2; }
+
+.gate__grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.035;
+  pointer-events: none;
+  display: none;   /* switched on with the rest of the ambient layer (section 7) */
+}
+
+.sprig {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  color: var(--cream);
+  opacity: 0.6;
+  pointer-events: none;
+  transform: rotate(var(--sprig-rot, 0deg));
+}
+
+.sprig__art {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform-origin: 0 0;
+}
+
+.sprig--tl { top: 14px; left: 14px; }
+.sprig--tr { top: 14px; right: 14px; --sprig-rot: 90deg; }
+.sprig--br { bottom: 14px; right: 14px; --sprig-rot: 180deg; }
+.sprig--bl { bottom: 14px; left: 14px; --sprig-rot: 270deg; }
+
+@media (min-width: 768px) {
+  .sprig { width: 140px; height: 140px; }
+  .sprig--tl { top: 24px; left: 24px; }
+  .sprig--tr { top: 24px; right: 24px; }
+  .sprig--br { bottom: 24px; right: 24px; }
+  .sprig--bl { bottom: 24px; left: 24px; }
+}
+
+.gate__field {
+  position: relative;
+  display: inline-block;
+}
+
+.gate__input {
+  display: block;
+  width: 18ch;
+  max-width: 100%;
+  padding: var(--space-2) 0 var(--space-3);
+  border: 0;
+  border-bottom: 1px solid var(--blush);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-light);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: max(16px, var(--text-1));   /* 16px floor keeps Safari from zooming */
+  letter-spacing: 0.04em;
+  text-align: center;
+  caret-color: var(--blush);
+  -webkit-appearance: none;
+  appearance: none;
+  outline-offset: 10px;
+}
+
+.gate__input::placeholder {
+  color: var(--taupe);
+  opacity: 1;
+}
+
+.gate__input:focus-visible {
+  outline: 1px solid var(--blush);
+}
+
+/* Autofill would otherwise paint its own ground over the rust */
+.gate__input:-webkit-autofill,
+.gate__input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--rust-deep) inset;
+  -webkit-text-fill-color: var(--ink-light);
+  caret-color: var(--blush);
+  transition: background-color 9999s;
+}
+
+@media (min-width: 480px) {
+  .gate__input { width: 22ch; }
+}
+
+/* Focus line: brightens the rule. Motion version scales it from centre (section 7). */
+.gate__underline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--ink-light);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gate__field:focus-within .gate__underline { opacity: 1; }
+
+.gate__field.is-invalid .gate__input { border-bottom-color: var(--rust-bright); }
+
+.gate__hint {
+  min-height: calc(var(--text--1) * var(--leading-body));
+  color: var(--taupe);
+  font-weight: 300;
+  font-size: var(--text--1);
+  letter-spacing: 0.04em;
+}
+
+.gate__form { row-gap: var(--space-4); }
+.gate__form .link-quiet { margin-top: var(--space-2); }
+
+
+/* 6b. Page 2 — the card -------------------------------------------------- */
+
+.card {
+  position: relative;
+  border: 1px solid var(--blush);
+  row-gap: var(--space-6);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgb(var(--blush-rgb) / 0.5);
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .card { padding: var(--space-9) var(--space-7); }
+}
+
+.card__group {
+  display: grid;
+  justify-items: center;
+  row-gap: var(--space-3);
+  width: 100%;
+}
+
+.card__copy {
+  max-width: 34ch;
+  line-height: var(--leading-body);
+}
+
+.card__title span { display: inline; }
+
+@media (max-width: 479.98px) {
+  .card__title span { display: block; }
+}
+
+.guest-name-wrap {
+  position: relative;
+  max-width: 100%;
+}
+
+.guest-name {
+  font-size: calc(clamp(2.5rem, 14vw, 3.815rem) * var(--name-scale, 1));
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  padding-inline: 0.15em;   /* Great Vibes swashes overhang the em box */
+}
+
+.guest-name__dot {
+  position: absolute;
+  top: 58%;
+  left: -20%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--rust);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.event {
+  display: grid;
+  row-gap: var(--space-5);
+  width: 100%;
+  margin-bottom: var(--space-4);
+}
+
+.event__item {
+  display: grid;
+  row-gap: var(--space-1);
+  justify-items: center;
+}
+
+.event__key { color: var(--taupe); }
+
+.event__value {
+  font-size: var(--text-0);
+  color: var(--rust);
+}
+
+@media (min-width: 640px) {
+  .event {
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--space-4);
+  }
+}
+
+
+/* 6c. Page 3 — flow, cocktail, panel --------------------------------------- */
+
+.screen--assess {
+  padding-bottom: 0;   /* the panel runs to the bottom edge */
+}
+
+.screen--assess .screen__inner {
+  display: grid;
+  row-gap: var(--space-9);
+}
+
+.block {
+  display: grid;
+  justify-items: center;
+  row-gap: var(--space-7);
+}
+
+/* The guest flow */
+
+.flow {
+  position: relative;
+  display: grid;
+  row-gap: var(--space-6);
+  width: 100%;
+  max-width: 24rem;
+}
+
+.flow::before {
+  content: "";
+  position: absolute;
+  top: 28px;
+  bottom: 28px;
+  left: 28px;
+  width: 1px;
+  background: var(--blush);
+}
+
+.flow__step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  column-gap: var(--space-4);
+  align-items: start;
+  text-align: left;
+}
+
+.flow__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--blush);
+  border-radius: 50%;
+  background: var(--sand);
+  color: var(--rust-bright);
+}
+
+.flow__icon svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.flow__text {
+  display: grid;
+  row-gap: var(--space-1);
+  padding-top: var(--space-3);
+}
+
+.flow__title { color: var(--rust); }
+
+.flow__copy {
+  max-width: 22ch;
+  font-size: var(--text--1);
+  font-weight: 400;
+  color: var(--rust);
+}
+
+@media (min-width: 768px) {
+  .flow {
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: var(--space-3);
+    max-width: none;
+  }
+
+  .flow::before {
+    top: 28px;
+    bottom: auto;
+    left: 10%;
+    right: 10%;
+    width: auto;
+    height: 1px;
+  }
+
+  .flow__step {
+    grid-template-columns: none;
+    justify-items: center;
+    row-gap: var(--space-2);
+    text-align: center;
+  }
+
+  .flow__text {
+    justify-items: center;
+    padding-top: var(--space-2);
+  }
+}
+
+/* Your hair cocktail */
+
+.cocktail__intro {
+  display: grid;
+  justify-items: center;
+  row-gap: var(--space-3);
+}
+
+.cocktail__label { color: var(--taupe); }
+
+.cocktail__copy {
+  max-width: 34ch;
+  font-weight: 300;
+  color: var(--rust);
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6) var(--space-4);
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .products { grid-template-columns: repeat(4, 1fr); }
+}
+
+.product__figure {
+  display: grid;
+  justify-items: center;
+  row-gap: var(--space-3);
+}
+
+.product__media {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 180px;
+}
+
+.product__media img {
+  max-height: 180px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.product__caption { color: var(--rust-bright); }
+
+/* CSS silhouette shown when a product image cannot load. Same box as the image. */
+.product__fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 180px;
+  background: var(--cream);
+}
+
+.bottle {
+  position: relative;
+  display: block;
+  width: var(--b-w);
+  height: var(--b-h);
+  margin-top: var(--c-h);   /* keeps body + cap visually centred */
+  border-radius: var(--b-r);
+  background: var(--sand);
+}
+
+.bottle::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: var(--c-w);
+  height: var(--c-h);
+  transform: translateX(-50%);
+  border-radius: var(--c-r, 3px 3px 0 0);
+  background: var(--sand);
+}
+
+.bottle--bottle { --b-w: 46px; --b-h: 112px; --b-r: 14px 14px 8px 8px; --c-w: 18px; --c-h: 18px; }
+.bottle--jar    { --b-w: 78px; --b-h: 62px;  --b-r: 6px 6px 12px 12px;  --c-w: 74px; --c-h: 16px; --c-r: 5px 5px 0 0; }
+
+/* A squeeze tube stands on its cap: crimped flat top, tapering into the cap. */
+.bottle--tube {
+  --b-w: 44px; --b-h: 104px; --b-r: 4px 4px 22px 22px / 4px 4px 70px 70px; --c-w: 24px; --c-h: 14px;
+  margin-top: 0;
+  margin-bottom: var(--c-h);
+}
+
+.bottle--tube::before {
+  bottom: auto;
+  top: 100%;
+  border-radius: 0 0 3px 3px;
+}
+
+/* The panel */
+
+.panel {
+  margin-top: var(--space-9);
+  margin-inline: calc(-1 * var(--gutter));
+  padding: var(--space-8) var(--gutter);
+  padding-bottom: max(var(--space-8), env(safe-area-inset-bottom));
+  background: var(--rust-deep);
+  color: var(--ink-light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.panel__inner {
+  display: grid;
+  justify-items: center;
+  row-gap: var(--space-5);
+}
+
+.panel__title { max-width: 14ch; }
+
+.panel__copy {
+  max-width: 34ch;
+  font-weight: 300;
+}
+
+.qr {
+  display: grid;
+  place-items: center;
+  width: 180px;
+  height: 180px;
+  margin-block: var(--space-3);
+  border: 1px solid var(--blush);
+}
+
+.qr__label { color: var(--taupe); }
+
+.tally {
+  width: 100%;
+  margin-top: var(--space-6);
+}
+
+.tally__frame {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+/* Applied by JS only if Tally's dynamicHeight never resizes the frame. */
+.tally__frame--fixed { min-height: 640px; }
+
+.tally__frame:focus-visible {
+  outline: 2px solid var(--blush);
+  outline-offset: 4px;
+}

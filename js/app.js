@@ -10,16 +10,19 @@
   /* ------------------------------------------------------------------------
      Editable content — product names, image paths and event details live
      here and nowhere else. Captions are shown uppercase by CSS.
+     `shape` picks the CSS silhouette used if an image cannot load:
+     'bottle' | 'jar' | 'tube'.
      ------------------------------------------------------------------------ */
 
   const PRODUCTS = [
-    { caption: 'Cleanse', name: 'Ultra Moisture Nourishing Shampoo',              src: 'assets/products/cleanse.png' },
-    { caption: 'Restore', name: 'Ultra Moisture Nourishing Mask',                 src: 'assets/products/restore.png' },
-    { caption: 'Define',  name: 'Ultra Moisture Nourishing Curling Cream',        src: 'assets/products/define.png' },
-    { caption: 'Protect', name: 'Ultra Moisture Nourishing Leave-In Conditioner', src: 'assets/products/protect.png' }
+    { caption: 'Cleanse', name: 'Ultra Moisture Nourishing Shampoo',              src: 'assets/products/cleanse.png', shape: 'bottle' },
+    { caption: 'Restore', name: 'Ultra Moisture Nourishing Mask',                 src: 'assets/products/restore.png', shape: 'jar' },
+    { caption: 'Define',  name: 'Ultra Moisture Nourishing Curling Cream',        src: 'assets/products/define.png',  shape: 'jar' },
+    { caption: 'Protect', name: 'Ultra Moisture Nourishing Leave-In Conditioner', src: 'assets/products/protect.png', shape: 'tube' }
   ];
 
   const EVENT = {
+    /* TODO: June 21, 2024 has passed — value kept verbatim from the deck until the client confirms the new date. */
     date:     'June 21, 2024',
     time:     '6:00 — 9:00 PM',   /* true em dash (U+2014), never a hyphen */
     location: 'New York City'
@@ -97,6 +100,62 @@
 
 
   /* ------------------------------------------------------------------------
+     Rendering — content from the config objects above. Text goes in through
+     textContent only.
+     ------------------------------------------------------------------------ */
+
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function renderEvent() {
+    const list = document.getElementById('event-details');
+    if (!list) return;
+
+    [['Date', EVENT.date], ['Time', EVENT.time], ['Location', EVENT.location]].forEach(function (pair) {
+      const item = el('div', 'event__item');
+      item.appendChild(el('dt', 'label event__key', pair[0]));
+      item.appendChild(el('dd', 'event__value', pair[1]));
+      list.appendChild(item);
+    });
+  }
+
+  function renderProducts() {
+    const list = document.getElementById('products');
+    if (!list) return;
+
+    PRODUCTS.forEach(function (product) {
+      const item = el('li', 'product');
+      const figure = el('figure', 'product__figure');
+      const media = el('div', 'product__media');
+
+      const img = document.createElement('img');
+      img.src = product.src;
+      img.alt = product.name;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.setAttribute('data-guard', '');
+
+      const fallback = el('div', 'product__fallback');
+      fallback.hidden = true;
+      fallback.setAttribute('data-fallback', '');
+      fallback.setAttribute('aria-hidden', 'true');
+      fallback.appendChild(el('span', 'bottle bottle--' + product.shape));
+
+      media.appendChild(img);
+      media.appendChild(fallback);
+      figure.appendChild(media);
+      figure.appendChild(el('figcaption', 'label product__caption', product.caption));
+      item.appendChild(figure);
+      list.appendChild(item);
+    });
+  }
+
+
+  /* ------------------------------------------------------------------------
      Init
      ------------------------------------------------------------------------ */
 
@@ -105,6 +164,8 @@
       screenEl[key] = document.getElementById('screen-' + key);
     });
 
+    renderEvent();
+    renderProducts();
     document.querySelectorAll('img[data-guard]').forEach(guardImage);
 
     /* Page 1: Enter in the input or the Reveal link both submit this form.

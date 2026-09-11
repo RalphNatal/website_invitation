@@ -10,22 +10,67 @@
   <!-- Fonts: the only external stylesheet. display=swap is set in the URL. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Jost:wght@300;400&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Jost:wght@300;400&family=Playfair+Display:ital,wght@0,700;1,700&display=swap">
 
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-screen="gate">
+
+  <!-- Shared SVG geometry. Lives outside the screens so it is never inside a
+       hidden section (WebKit will not render a <use> whose target is). -->
+  <svg class="svg-defs" aria-hidden="true" focusable="false" width="0" height="0">
+    <defs>
+      <!-- One corner sprig, drawn for the top-left corner. The other three
+           corners rotate it. Stroke only, engraving weight. -->
+      <symbol id="sprig" viewBox="0 0 100 100">
+        <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <defs><path id="sprig-leaf" vector-effect="non-scaling-stroke" d="M0 0C3-4.2 8.5-4.2 12 0 8.5 4.2 3 4.2 0 0ZM0 0h9"/></defs>
+          <path vector-effect="non-scaling-stroke" d="M4 4C22 6 44 16 62 36"/>
+          <path vector-effect="non-scaling-stroke" d="M4 4C6 22 16 44 36 62"/>
+          <path vector-effect="non-scaling-stroke" d="M4 4C10 10 15 17 18 25"/>
+          <circle vector-effect="non-scaling-stroke" cx="18.5" cy="26" r="1.6"/>
+          <use href="#sprig-leaf" transform="translate(24 9.1) rotate(-33)"/>
+          <use href="#sprig-leaf" transform="translate(39 16.7) rotate(75)"/>
+          <use href="#sprig-leaf" transform="translate(53.7 27.7) rotate(-13) scale(.9)"/>
+          <use href="#sprig-leaf" transform="translate(62 36) rotate(48) scale(1.05)"/>
+          <use href="#sprig-leaf" transform="translate(9.1 24) rotate(123)"/>
+          <use href="#sprig-leaf" transform="translate(16.7 39) rotate(15)"/>
+          <use href="#sprig-leaf" transform="translate(27.7 53.7) rotate(103) scale(.9)"/>
+          <use href="#sprig-leaf" transform="translate(36 62) rotate(42) scale(1.05)"/>
+        </g>
+      </symbol>
+      <!-- Paper grain for Page 1 -->
+      <filter id="grain" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+      </filter>
+    </defs>
+  </svg>
+
   <main class="app" id="app">
 
     <!-- 1 · The gateway -->
     <section class="screen screen--gate" id="screen-gate" aria-labelledby="gate-title">
+      <svg class="gate__grain" aria-hidden="true" focusable="false"><rect width="100%" height="100%" filter="url(#grain)"/></svg>
+
+      <div class="sprig sprig--tl" aria-hidden="true"><svg class="sprig__art" focusable="false"><use href="#sprig"/></svg></div>
+      <div class="sprig sprig--tr" aria-hidden="true"><svg class="sprig__art" focusable="false"><use href="#sprig"/></svg></div>
+      <div class="sprig sprig--br" aria-hidden="true"><svg class="sprig__art" focusable="false"><use href="#sprig"/></svg></div>
+      <div class="sprig sprig--bl" aria-hidden="true"><svg class="sprig__art" focusable="false"><use href="#sprig"/></svg></div>
+
       <div class="gate__content">
         <h1 class="gate__logo" id="gate-title" tabindex="-1">
           <img class="gate__logo-img" src="assets/logo-cantu.svg" alt="Cantu" data-guard>
           <span class="gate__logo-text" data-fallback hidden>cantu<sup>&reg;</sup></span>
         </h1>
         <form class="gate__form" id="gate-form" novalidate>
-          <!-- The Guest Name input lands in checkpoint 2; validation in checkpoint 3. -->
+          <div class="gate__field" id="gate-field">
+            <label class="visually-hidden" for="guest-input">Guest name</label>
+            <input class="gate__input" id="guest-input" type="text" name="name" placeholder="Guest Name"
+                   autocomplete="name" autocapitalize="words" spellcheck="false" maxlength="40" enterkeyhint="go">
+            <span class="gate__underline" aria-hidden="true"></span>
+          </div>
+          <p class="gate__hint" id="gate-hint" aria-live="polite"></p>
           <button class="link-quiet" type="submit">Reveal</button>
         </form>
       </div>
@@ -34,17 +79,117 @@
     <!-- 2 · The invitation -->
     <section class="screen screen--invite" id="screen-invite" aria-labelledby="invite-title" hidden>
       <article class="card">
-        <p class="label">Your hair prescription</p>
-        <p class="guest-name" id="guest-name">Guest,</p>
-        <h1 class="display" id="invite-title" tabindex="-1">The Cantu Collective</h1>
-        <button class="link-quiet" type="button" data-goto="assess">Continue</button>
+        <div class="card__group" data-reveal>
+          <p class="label">Your hair prescription</p>
+          <div class="guest-name-wrap">
+            <p class="guest-name" id="guest-name">Guest,</p>
+            <span class="guest-name__dot" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <p class="label card__copy" data-reveal>Before we prescribe your personalized regimen, we&rsquo;d love to understand your hair.</p>
+
+        <hr class="rule" data-reveal>
+
+        <div class="card__group" data-reveal>
+          <p class="label">You&rsquo;re invited to</p>
+          <h1 class="display card__title" id="invite-title" tabindex="-1"><span>The Cantu</span> <span>Collective</span></h1>
+          <p class="label card__copy">An intimate event dedicated to real hair, real care, and you.</p>
+        </div>
+
+        <hr class="rule" data-reveal>
+
+        <div class="card__group card__group--event" data-reveal>
+          <dl class="event" id="event-details"></dl>
+          <p class="label card__closing">Real care. Real people. Real talk.</p>
+        </div>
+
+        <button class="link-quiet" type="button" data-goto="assess" data-reveal>Continue</button>
       </article>
     </section>
 
     <!-- 3 · Assessment & hair cocktail -->
     <section class="screen screen--assess" id="screen-assess" aria-labelledby="assess-title" hidden>
       <div class="screen__inner">
-        <h1 class="label" id="assess-title" tabindex="-1">Your journey</h1>
+
+        <!-- a) The guest flow -->
+        <div class="block">
+          <h1 class="display block__title" id="assess-title" tabindex="-1" data-reveal>The guest flow</h1>
+          <ol class="flow">
+            <li class="flow__step" data-reveal>
+              <span class="flow__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M3.5 6.5h17v11h-17z"/><path d="M3.5 7l8.5 6.5L20.5 7"/></svg>
+              </span>
+              <div class="flow__text">
+                <h2 class="label flow__title">Invitation arrives</h2>
+                <p class="flow__copy">Guest receives a curated &ldquo;Hair Prescription&rdquo; invite with a QR code to begin their journey.</p>
+              </div>
+            </li>
+            <li class="flow__step" data-reveal>
+              <span class="flow__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M9 4.5h6V7H9z"/><path d="M15 5.5h3.5v14h-13v-14H9"/><path d="M9 11.5h6M9 15h4"/></svg>
+              </span>
+              <div class="flow__text">
+                <h2 class="label flow__title">Hair profile survey</h2>
+                <p class="flow__copy">Guest completes a beautiful, engaging survey that captures their hair needs, goals, and preferences.</p>
+              </div>
+            </li>
+            <li class="flow__step" data-reveal>
+              <span class="flow__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M4.5 4.5h15L12 13z"/><path d="M12 13v6.5M8 19.5h8"/><path d="M7.5 8h9"/></svg>
+              </span>
+              <div class="flow__text">
+                <h2 class="label flow__title">Personalized results</h2>
+                <p class="flow__copy">Guest unlocks their personalized Hair Cocktail and Signature Cocktail Pairing.</p>
+              </div>
+            </li>
+            <li class="flow__step" data-reveal>
+              <span class="flow__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M4 6.5h16v13H4z"/><path d="M4 10.5h16M8 4.5V8M16 4.5V8"/><path d="M12 15h.01"/></svg>
+              </span>
+              <div class="flow__text">
+                <h2 class="label flow__title">Event confirmation</h2>
+                <p class="flow__copy">Guest receives event details + calendar invite. We&rsquo;ll have their Hair Prescription ready.</p>
+              </div>
+            </li>
+            <li class="flow__step" data-reveal>
+              <span class="flow__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M7 4.5h10v8H7z"/><path d="M5 12.5h14v3H5z"/><path d="M6.5 15.5v4M17.5 15.5v4"/></svg>
+              </span>
+              <div class="flow__text">
+                <h2 class="label flow__title">At the event</h2>
+                <p class="flow__copy">Guest arrives to a personalized experience based on their Hair Prescription.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <!-- b) Your hair cocktail -->
+        <div class="block cocktail">
+          <div class="cocktail__intro" data-reveal>
+            <h2 class="label cocktail__label">Your hair cocktail could include</h2>
+            <p class="cocktail__copy">Batana Oil + Jamaican Black Castor Oil delivers five days of moisture for dry, damaged curls and coils.</p>
+          </div>
+          <ul class="products" id="products" data-reveal></ul>
+        </div>
+
+      </div>
+
+      <!-- c) Start your hair assessment — full-bleed panel. Nothing in here animates. -->
+      <div class="panel">
+        <div class="screen__inner panel__inner">
+          <p class="label">Your journey</p>
+          <h2 class="display display--sentence panel__title">Start your hair <em>assessment.</em></h2>
+          <p class="panel__copy">Scan to begin your personalized Cantu Hair Prescription.</p>
+          <div class="qr" role="img" aria-label="QR code placeholder">
+            <span class="label qr__label">QR code</span>
+          </div>
+          <p class="label">Open your camera to begin</p>
+
+          <div class="tally">
+            <iframe class="tally__frame" id="tally-frame" data-tally-src="" loading="lazy" width="100%" height="200" title="Cantu hair assessment"></iframe>
+          </div>
+        </div>
       </div>
     </section>
 
