@@ -134,7 +134,11 @@
   }
 
   function revealInView(section) {
-    const limit = window.innerHeight * 0.92;
+    /* At the foot of the page nothing can scroll further in, so the 8%
+       bottom margin is dropped there — otherwise the last block (the footer)
+       can sit inside it forever, out of the observer's reach. */
+    const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1;
+    const limit = window.innerHeight * (atBottom ? 1 : 0.92);
     revealBatch(pendingReveals(section).filter(function (node) {
       return node.getBoundingClientRect().top < limit;
     }));
