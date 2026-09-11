@@ -45,15 +45,15 @@ never broken without them.
 | Path | What | Fallback today |
 | --- | --- | --- |
 | `assets/logo-cantu.svg` | The cantu® wordmark | Text wordmark set in Jost |
-| `assets/products/hydrating-conditioner.png` | Cantu Shea Butter Hydrating Cream Conditioner | CSS bottle silhouette |
-| `assets/products/curl-activator.png` | Cantu Shea Butter for Natural Curls Curl Activator Cream | CSS jar silhouette |
-| `assets/products/coconut-curling-cream.png` | Cantu Shea Butter Coconut Curling Cream | CSS jar silhouette |
-| `assets/products/twist-lock-gel.png` | Cantu Shea Butter Moisturizing Twist & Lock Gel | CSS wide-jar silhouette |
-| `assets/products/nourishing-shampoo.png` | Cantu Shea Butter Nourishing Shampoo | CSS bottle silhouette |
+| `assets/products/curl-cream.png` | Cantu Ultra Moisture Nourishing Curl Cream | CSS jar silhouette |
+| `assets/products/mask.png` | Cantu Ultra Moisture Nourishing Mask | CSS jar silhouette |
+| `assets/products/shampoo.png` | Cantu Ultra Moisture Nourishing Shampoo | CSS bottle silhouette |
+| `assets/products/leave-in-conditioner.png` | Cantu Ultra Moisture Nourishing Leave-In Conditioner | CSS bottle silhouette |
 
-Product PNGs: transparent background, roughly 800px tall. They are displayed
-in a fixed box (80 × 110px beside the text below 640px, 120 × 120px above it)
-with `object-fit: contain`, so nothing shifts when a file lands.
+Product PNGs: transparent background, 1000 × 1000px. They sit in a fixed-height
+box (110px beside the text below 640px, 140px above it) with `object-fit:
+contain`, so nothing shifts when a file lands. Filenames are lowercase slugs —
+the deploy filesystem is case-sensitive and spaces would need encoding.
 
 The corner leaf border is inline SVG in `index.html` (one `<symbol id="sprig">`,
 four rotated `<use>` references); there is no `leaf-border.svg` file.

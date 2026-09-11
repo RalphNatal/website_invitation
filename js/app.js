@@ -309,12 +309,11 @@
       media.appendChild(img);
       media.appendChild(fallback);
 
-      const text = el('div', 'product__text');
-      text.appendChild(el('p', 'product__name', product.name));
-      text.appendChild(el('p', 'product__blurb', product.blurb));
-
+      /* Media, name and blurb are direct children: the cell is a subgrid, so
+         each sits on a row shared with every other cell (see .products). */
       item.appendChild(media);
-      item.appendChild(text);
+      item.appendChild(el('p', 'product__name', product.name));
+      item.appendChild(el('p', 'product__blurb', product.blurb));
       list.appendChild(item);
     });
   }
