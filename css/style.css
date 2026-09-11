@@ -1,0 +1,303 @@
+/* ==========================================================================
+   The Cantu Collective — invitation
+   Vanilla CSS, mobile-first (designed at 390px). Desktop is the same centred
+   column, never wider than --measure. Stationery, not a web layout.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. Tokens
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Palette — sampled from the client deck. This is the whole set. */
+  --rust-deep:   #712312;   /* deep brick — Page 1 + QR panel background */
+  --rust:        #8A3624;   /* primary text + rules on cream */
+  --rust-bright: #9C3618;   /* small accent: icons, product captions only */
+  --cream:       #FDF7F1;   /* invitation card stock */
+  --sand:        #F1E2D5;   /* warm section background */
+  --blush:       #DE9078;   /* hairlines, thin frames */
+  --taupe:       #C0A89C;   /* muted supporting text */
+  --ink-light:   #FCF0E8;   /* type on rust backgrounds */
+
+  /* The same swatches as bare channels, for alpha only: rgb(var(--blush-rgb) / .4) */
+  --rust-deep-rgb: 113 35 18;
+  --blush-rgb:     222 144 120;
+  --cream-rgb:     253 247 241;
+
+  /* Type */
+  --font-script:  "Great Vibes", "Snell Roundhand", "Brush Script MT", cursive;
+  --font-display: "Playfair Display", "Times New Roman", Georgia, serif;
+  --font-body:    "Jost", "Futura", "Century Gothic", "Helvetica Neue", Arial, sans-serif;
+
+  /* Scale — 1.25 (major third) from a 1rem base */
+  --text--2: 0.64rem;
+  --text--1: 0.8rem;
+  --text-0:  1rem;
+  --text-1:  1.25rem;
+  --text-2:  1.5625rem;
+  --text-3:  1.953rem;
+  --text-4:  2.441rem;
+  --text-5:  3.052rem;
+  --text-6:  3.815rem;
+
+  --track-label:   0.18em;   /* the deck's tracked-out uppercase labels */
+  --track-display: -0.01em;  /* Playfair sits tight */
+
+  --leading-tight: 1.1;
+  --leading-body:  1.6;
+
+  /* Rhythm */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+
+  --measure: 40rem;          /* 640px column */
+  --gutter:  var(--space-4);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. Reset — only what the design needs
+   -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body,
+h1, h2, h3,
+p, figure, ul, ol { margin: 0; }
+
+ul, ol { padding: 0; list-style: none; }
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+}
+
+[hidden] { display: none !important; }
+
+
+/* --------------------------------------------------------------------------
+   3. Base
+   -------------------------------------------------------------------------- */
+
+html {
+  background: var(--sand);
+  color: var(--rust);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: var(--leading-body);
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--sand);
+  text-align: center;
+}
+
+/* Body colour follows the active screen so overscroll never shows the wrong ground. */
+body[data-screen="gate"] { background: var(--rust-deep); }
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 6px;
+}
+
+/* Headings receive focus programmatically on screen change; keep that quiet. */
+[tabindex="-1"]:focus-visible {
+  outline: 1px solid var(--blush);
+  outline-offset: 0.75rem;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. Type roles
+   -------------------------------------------------------------------------- */
+
+/* Small tracked-out labels, as in the deck */
+.label {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: var(--text--1);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  line-height: var(--leading-body);
+}
+
+/* Display / event name */
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-4);
+  letter-spacing: var(--track-display);
+  line-height: var(--leading-tight);
+  text-transform: uppercase;
+}
+
+/* Guest name — Great Vibes, Page 2 hero only */
+.guest-name {
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: var(--text-6);
+  line-height: 1.2;
+  color: var(--rust);
+}
+
+/* A quiet text link: tracked caps on a blush hairline. Used for both advances. */
+.link-quiet {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text--1);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  line-height: 1;
+  padding: var(--space-2) var(--space-1) var(--space-1);
+  border-bottom: 1px solid var(--blush);
+  text-decoration: none;
+}
+
+.link-quiet:hover { border-bottom-color: currentColor; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   5. Screens — three <section>s in one document, one visible at a time
+   -------------------------------------------------------------------------- */
+
+.screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--space-8) var(--gutter);
+  padding-bottom: max(var(--space-8), env(safe-area-inset-bottom));
+}
+
+.screen__inner {
+  width: 100%;
+  max-width: var(--measure);
+  margin-inline: auto;
+}
+
+
+/* 5a. Page 1 — the gateway ------------------------------------------------- */
+
+.screen--gate {
+  display: grid;
+  grid-template-rows: minmax(var(--space-8), 1fr) auto minmax(var(--space-8), 2fr);
+  justify-items: center;
+  background: var(--rust-deep);
+  color: var(--ink-light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.gate__content {
+  grid-row: 2;
+  display: grid;
+  justify-items: center;
+  row-gap: var(--space-8);
+  width: 100%;
+  max-width: var(--measure);
+}
+
+.gate__logo { font: inherit; }
+
+.gate__logo-img {
+  height: 3.25rem;   /* fixed box so the layout is stable before the SVG arrives */
+  width: auto;
+}
+
+/* Text wordmark, shown only if the SVG cannot load */
+.gate__logo-text {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-5);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.gate__logo-text sup {
+  font-size: 0.28em;
+  letter-spacing: 0;
+  vertical-align: 1.6em;
+  margin-left: 0.15em;
+}
+
+.gate__form {
+  display: grid;
+  justify-items: center;
+  row-gap: var(--space-5);
+}
+
+.screen--gate .link-quiet { color: var(--blush); }
+.screen--gate .link-quiet:hover { color: var(--ink-light); }
+
+
+/* 5b. Page 2 — the invitation --------------------------------------------- */
+
+.screen--invite {
+  display: grid;
+  place-items: center;
+  background: var(--sand);
+}
+
+.card {
+  width: 100%;
+  max-width: var(--measure);
+  padding: var(--space-8) var(--space-5);
+  background: var(--cream);
+  display: grid;
+  justify-items: center;
+  row-gap: var(--space-6);
+}
+
+
+/* 5c. Page 3 — assessment & hair cocktail --------------------------------- */
+
+.screen--assess {
+  background: var(--sand);
+}

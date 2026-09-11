@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The Cantu Collective</title>
+  <meta name="description" content="An intimate event dedicated to real hair, real care, and you.">
+  <meta name="theme-color" content="#712312">
+
+  <!-- Fonts: the only external stylesheet. display=swap is set in the URL. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Jost:wght@300;400&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-screen="gate">
+  <main class="app" id="app">
+
+    <!-- 1 · The gateway -->
+    <section class="screen screen--gate" id="screen-gate" aria-labelledby="gate-title">
+      <div class="gate__content">
+        <h1 class="gate__logo" id="gate-title" tabindex="-1">
+          <img class="gate__logo-img" src="assets/logo-cantu.svg" alt="Cantu" data-guard>
+          <span class="gate__logo-text" data-fallback hidden>cantu<sup>&reg;</sup></span>
+        </h1>
+        <form class="gate__form" id="gate-form" novalidate>
+          <!-- The Guest Name input lands in checkpoint 2; validation in checkpoint 3. -->
+          <button class="link-quiet" type="submit">Reveal</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 2 · The invitation -->
+    <section class="screen screen--invite" id="screen-invite" aria-labelledby="invite-title" hidden>
+      <article class="card">
+        <p class="label">Your hair prescription</p>
+        <p class="guest-name" id="guest-name">Guest,</p>
+        <h1 class="display" id="invite-title" tabindex="-1">The Cantu Collective</h1>
+        <button class="link-quiet" type="button" data-goto="assess">Continue</button>
+      </article>
+    </section>
+
+    <!-- 3 · Assessment & hair cocktail -->
+    <section class="screen screen--assess" id="screen-assess" aria-labelledby="assess-title" hidden>
+      <div class="screen__inner">
+        <h1 class="label" id="assess-title" tabindex="-1">Your journey</h1>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>
