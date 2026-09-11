@@ -817,3 +817,203 @@ dd { margin: 0; }
   outline: 2px solid var(--blush);
   outline-offset: 4px;
 }
+
+
+/* --------------------------------------------------------------------------
+   7. Motion — every rule here sits behind prefers-reduced-motion. Outside
+   this block the visible state is the default: nothing above depends on an
+   animation or a callback to become visible.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* 7a. Ambient (Page 1) — texture, not animation ------------------------- */
+
+  .gate__grain { display: block; }
+
+  /* One slow radial glow drifting across the rust */
+  .screen--gate::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(ellipse 70% 55% at 50% 50%, rgb(var(--cream-rgb) / 0.07), transparent 70%);
+    background-size: 180% 180%;
+    background-repeat: no-repeat;
+    background-position: 20% 30%;
+    animation: gate-drift 40s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+
+  @keyframes gate-drift {
+    from { background-position: 20% 30%; }
+    to   { background-position: 80% 70%; }
+  }
+
+  /* Corner sprigs sway from their root, each on its own clock */
+  .sprig__art {
+    animation: sprig-sway var(--sway-dur, 14s) ease-in-out infinite alternate;
+    animation-delay: var(--sway-delay, 0s);
+  }
+
+  .sprig--tl .sprig__art { --sway-dur: 14s; --sway-delay: 0s; }
+  .sprig--tr .sprig__art { --sway-dur: 16s; --sway-delay: -5s; }
+  .sprig--br .sprig__art { --sway-dur: 12s; --sway-delay: -9s; }
+  .sprig--bl .sprig__art { --sway-dur: 15s; --sway-delay: -3s; }
+
+  @keyframes sprig-sway {
+    from { transform: rotate(-1.5deg) translate(0, 0); }
+    to   { transform: rotate(1.5deg) translate(1px, 1.5px); }
+  }
+
+
+  /* 7b. Input focus -------------------------------------------------------- */
+
+  .gate__underline {
+    opacity: 1;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 400ms var(--ease);
+  }
+
+  .gate__field:focus-within .gate__underline { transform: scaleX(1); }
+
+  .gate__logo {
+    transition: transform 600ms var(--ease), filter 600ms var(--ease);
+  }
+
+  .screen--gate.is-focused .gate__logo {
+    transform: translateY(-4px);
+    filter: drop-shadow(0 0 14px rgb(var(--blush-rgb) / 0.45));
+  }
+
+
+  /* 7c. The reveal (1 → 2): a gate-fold ------------------------------------ */
+
+  .gate-fold {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    perspective: 1600px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .gate-fold__half {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    overflow: hidden;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transition: transform 1100ms var(--ease);
+    will-change: transform;
+  }
+
+  .gate-fold__half--left  { left: 0;  transform-origin: left center; }
+  .gate-fold__half--right { right: 0; transform-origin: right center; }
+
+  /* Inner faces darken as they turn, so the fold reads as dimensional */
+  .gate-fold__half::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgb(var(--rust-deep-rgb) / 0);
+    transition: background-color 1100ms var(--ease);
+  }
+
+  .gate-fold.is-open .gate-fold__half--left  { transform: rotateY(-105deg); }
+  .gate-fold.is-open .gate-fold__half--right { transform: rotateY(105deg); }
+  .gate-fold.is-open .gate-fold__half::after { background-color: rgb(var(--rust-deep-rgb) / 0.55); }
+
+  /* Each half shows its own side of a full-width clone of the gate */
+  .gate-fold__clone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .gate-fold__half--right .gate-fold__clone { left: -100%; }
+
+  .gate-fold .sprig__art,
+  .gate-fold .screen--gate::before { animation: none; }
+
+  .gate-fold .gate__grain { display: none; }
+
+  /* Page 2 waits beneath the doors, slightly small, and settles as they open */
+  .screen--invite.is-entering .card {
+    transform: scale(0.97);
+    transition: transform 1100ms var(--ease);
+  }
+
+  .screen--invite.is-entering.is-open .card { transform: scale(1); }
+
+
+  /* 7d. The name arrives like ink ----------------------------------------- */
+
+  .screen--invite.is-entering .guest-name {
+    -webkit-mask-image: linear-gradient(to right, var(--rust) 0%, var(--rust) 40%, transparent 43.2%);
+    mask-image: linear-gradient(to right, var(--rust) 0%, var(--rust) 40%, transparent 43.2%);
+    -webkit-mask-size: 250% 100%;
+    mask-size: 250% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    animation: ink-arrive 1600ms ease-out 300ms both;
+  }
+
+  /* Mask is 2.5× the text width: black to 100%, an 8% feather, then clear.
+     80% → 0% walks the feathered edge from just left of the text to past its end. */
+  @keyframes ink-arrive {
+    from { -webkit-mask-position: 80% 0; mask-position: 80% 0; }
+    to   { -webkit-mask-position: 0% 0;  mask-position: 0% 0; }
+  }
+
+  .screen--invite.is-entering .guest-name__dot {
+    animation:
+      ink-dot-travel 1600ms ease-out 300ms both,
+      ink-dot-fade   1600ms linear   300ms both;
+  }
+
+  @keyframes ink-dot-travel {
+    from { left: -20%; }
+    to   { left: 100%; }
+  }
+
+  @keyframes ink-dot-fade {
+    0%   { opacity: 0; }
+    6%   { opacity: 1; }
+    82%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  @supports not ((mask-position: 0 0) or (-webkit-mask-position: 0 0)) {
+    .screen--invite.is-entering .guest-name {
+      -webkit-mask-image: none;
+      mask-image: none;
+      animation-name: ink-clip;
+    }
+
+    @keyframes ink-clip {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
+    }
+  }
+
+
+  /* 7e. Staggered cascade (Pages 2 and 3) --------------------------------- */
+
+  /* Hidden only while the screen is entering AND the block has not been
+     revealed; the screen class comes from JS, so without JS nothing hides. */
+  .screen.is-entering [data-reveal] {
+    transition: opacity 700ms var(--ease), transform 700ms var(--ease);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .screen.is-entering [data-reveal]:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+}

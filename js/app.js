@@ -81,6 +81,144 @@
   /* Per-screen work that must wait until the section is actually visible. */
   function afterShow(name) {
     if (name === 'assess') initTally();
+    if (name !== 'gate') enterScreen(screenEl[name]);
+  }
+
+
+  /* ------------------------------------------------------------------------
+     Motion. Every visual state below is also defined in CSS behind
+     prefers-reduced-motion; with reduced motion on, none of this runs and
+     everything is simply visible.
+     ------------------------------------------------------------------------ */
+
+  const motionOK = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: no-preference)').matches);
+
+  const REVEAL_STAGGER = 200;   /* ms between blocks revealed together */
+  const REVEAL_SAFETY = 3000;   /* ms before anything still hidden in view is forced visible */
+
+  function domOrder(a, b) {
+    return (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1;
+  }
+
+  function pendingReveals(section) {
+    return Array.prototype.filter.call(section.querySelectorAll('[data-reveal]'), function (node) {
+      return !node.classList.contains('is-visible');
+    });
+  }
+
+  /* Blocks revealed in the same batch cascade 200ms apart, in DOM order. */
+  function revealBatch(nodes) {
+    nodes.sort(domOrder).forEach(function (node, index) {
+      node.style.setProperty('--reveal-delay', (index * REVEAL_STAGGER) + 'ms');
+      node.classList.add('is-visible');
+    });
+  }
+
+  function revealInView(section) {
+    const limit = window.innerHeight * 0.92;
+    revealBatch(pendingReveals(section).filter(function (node) {
+      return node.getBoundingClientRect().top < limit;
+    }));
+  }
+
+  /* Elements inside a hidden section never intersect, so the observer is
+     created here — after the section is unhidden — not at init. */
+  function observeReveals(section) {
+    const pending = pendingReveals(section);
+    if (!pending.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+      revealBatch(pending);
+      return;
+    }
+
+    const observer = new IntersectionObserver(function (entries) {
+      const batch = entries
+        .filter(function (entry) { return entry.isIntersecting; })
+        .map(function (entry) { return entry.target; })
+        .filter(function (node) { return !node.classList.contains('is-visible'); });
+
+      revealBatch(batch);
+      batch.forEach(function (node) { observer.unobserve(node); });
+      if (!pendingReveals(section).length) observer.disconnect();
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.1 });
+
+    pending.forEach(function (node) { observer.observe(node); });
+
+    /* Belt and braces: if the observer never fires, scrolling still reveals. */
+    let queued = false;
+    function onScroll() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () {
+        queued = false;
+        revealInView(section);
+        if (!pendingReveals(section).length) window.removeEventListener('scroll', onScroll);
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  /* Entrance for Pages 2 and 3. Runs once per screen. */
+  function enterScreen(section) {
+    if (!motionOK || !section || section.dataset.entered) return;
+    section.dataset.entered = 'true';
+
+    /* Applied synchronously so the first paint already holds the start state. */
+    section.classList.add('is-entering');
+
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        section.classList.add('is-open');
+        observeReveals(section);
+      });
+    });
+
+    /* Safety: nothing in view may stay hidden because a callback never fired. */
+    setTimeout(function () { revealInView(section); }, REVEAL_SAFETY);
+  }
+
+  /* The gate-fold: two clipped clones of Page 1 swing open over Page 2.
+     The clone is inert and pointer-events: none, and is removed on
+     transitionend or after 1500ms, whichever comes first. */
+  function foldGate(gate, typedValue) {
+    const wrap = el('div', 'gate-fold');
+    wrap.setAttribute('aria-hidden', 'true');
+    wrap.setAttribute('inert', '');
+
+    ['left', 'right'].forEach(function (side) {
+      const half = el('div', 'gate-fold__half gate-fold__half--' + side);
+      const clone = gate.cloneNode(true);
+      clone.hidden = false;
+      clone.classList.add('gate-fold__clone');
+      clone.removeAttribute('id');
+      clone.removeAttribute('aria-labelledby');
+      clone.querySelectorAll('[id]').forEach(function (node) { node.removeAttribute('id'); });
+
+      /* cloneNode copies attributes, not the typed value */
+      const input = clone.querySelector('input');
+      if (input) input.value = typedValue;
+
+      half.appendChild(clone);
+      wrap.appendChild(half);
+    });
+
+    document.body.appendChild(wrap);
+
+    let done = false;
+    function finish() {
+      if (done) return;
+      done = true;
+      wrap.remove();
+    }
+
+    wrap.addEventListener('transitionend', function (event) {
+      if (event.propertyName === 'transform' && event.target.classList.contains('gate-fold__half')) finish();
+    });
+    setTimeout(finish, 1500);
+
+    void wrap.offsetWidth;   /* commit the closed state before opening */
+    requestAnimationFrame(function () { wrap.classList.add('is-open'); });
   }
 
 
@@ -237,6 +375,10 @@
 
     input.addEventListener('input', clearHint);
 
+    /* The logo lifts while the input has focus (section 7b) */
+    input.addEventListener('focus', function () { screenEl.gate.classList.add('is-focused'); });
+    input.addEventListener('blur', function () { screenEl.gate.classList.remove('is-focused'); });
+
     form.addEventListener('submit', function (event) {
       event.preventDefault();
 
@@ -252,6 +394,11 @@
       const name = titleCase(candidate);
       storeName(name);
       setGuestName(name);
+
+      /* Clone the gate while it is still visible (and still focused, so the
+         lifted logo carries over), then dismiss the soft keyboard. */
+      if (motionOK) foldGate(screenEl.gate, input.value);
+      input.blur();
       showScreen('invite');
     });
   }
