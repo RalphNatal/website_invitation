@@ -39,11 +39,6 @@
           <use href="#sprig-leaf" transform="translate(36 62) rotate(42) scale(1.05)"/>
         </g>
       </symbol>
-      <!-- Paper grain for Page 1 -->
-      <filter id="grain" x="0" y="0" width="100%" height="100%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/>
-        <feColorMatrix type="saturate" values="0"/>
-      </filter>
     </defs>
   </svg>
 
@@ -51,7 +46,6 @@
 
     <!-- 1 · The gateway -->
     <section class="screen screen--gate" id="screen-gate" aria-labelledby="gate-title">
-      <svg class="gate__grain" aria-hidden="true" focusable="false"><rect width="100%" height="100%" filter="url(#grain)"/></svg>
 
       <div class="sprig sprig--tl" aria-hidden="true"><svg class="sprig__art" focusable="false"><use href="#sprig"/></svg></div>
       <div class="sprig sprig--tr" aria-hidden="true"><svg class="sprig__art" focusable="false"><use href="#sprig"/></svg></div>

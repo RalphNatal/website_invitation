@@ -347,28 +347,47 @@ hr.rule {
 dd { margin: 0; }
 
 
-/* 6a. Page 1 — sprigs, grain, input --------------------------------------- */
+/* 6a. Page 1 — paper, sprigs, input --------------------------------------- */
 
 .screen--gate {
   position: relative;
   overflow: hidden;
-  isolation: isolate;
+  isolation: isolate;   /* the paper blends against this section only, never the body */
 }
 
 .gate__content { position: relative; z-index: 2; }
 
-.gate__grain {
+/* Printed stock, in three static layers on one pseudo-element, blended
+   over the rust with overlay:
+   1. grain — fractal noise rendered once into a 300px tile and repeated
+      (stitchTiles hides the seams). A viewport-sized filter is slow on phones.
+   2. mottle — three very large, very soft radial gradients, offset from one
+      another, so the field reads as unevenly inked rather than flat.
+   3. vignette — the outer edges darkened by no more than 8%, so the centre
+      feels lit.
+   None of this animates, on any motion preference: full-screen moving noise
+   is nauseating and expensive. The slow glow is a separate layer (::after,
+   section 7a). Everything readable sits above at z-index 1 or 2. */
+.screen--gate::before {
+  content: "";
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.035;
+  z-index: 0;
   pointer-events: none;
-  display: none;   /* switched on with the rest of the ambient layer (section 7) */
+  mix-blend-mode: overlay;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.07'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse 90% 70% at 22% 28%, rgb(var(--cream-rgb) / 0.10), transparent 70%),
+    radial-gradient(ellipse 80% 90% at 78% 72%, rgb(0 0 0 / 0.12), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 60% 12%, rgb(var(--cream-rgb) / 0.06), transparent 70%),
+    radial-gradient(ellipse 85% 85% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.08) 100%);
+  background-size: 300px 300px, auto, auto, auto, auto;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
 }
 
 .sprig {
   position: absolute;
+  z-index: 1;   /* above the paper, below the content */
   width: 96px;
   height: 96px;
   color: var(--cream);
@@ -1050,13 +1069,12 @@ dd { margin: 0; }
 
   /* 7a. Ambient (Page 1) — texture, not animation ------------------------- */
 
-  .gate__grain { display: block; }
-
-  /* One slow radial glow drifting across the rust */
-  .screen--gate::before {
+  /* One slow radial glow drifting across the paper (which is ::before, static) */
+  .screen--gate::after {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 0;
     background-image: radial-gradient(ellipse 70% 55% at 50% 50%, rgb(var(--cream-rgb) / 0.07), transparent 70%);
     background-size: 180% 180%;
     background-repeat: no-repeat;
@@ -1160,9 +1178,7 @@ dd { margin: 0; }
   .gate-fold__half--right .gate-fold__clone { left: -100%; }
 
   .gate-fold .sprig__art,
-  .gate-fold .screen--gate::before { animation: none; }
-
-  .gate-fold .gate__grain { display: none; }
+  .gate-fold .screen--gate::after { animation: none; }
 
   /* Page 2 waits beneath the doors, slightly small, and settles as they open */
   .screen--invite.is-entering .card {
