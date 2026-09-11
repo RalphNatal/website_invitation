@@ -52,9 +52,10 @@ never broken without them.
 | `assets/products/shampoo.png` | Cantu Ultra Moisture Nourishing Shampoo | CSS bottle silhouette |
 | `assets/products/leave-in-conditioner.png` | Cantu Ultra Moisture Nourishing Leave-In Conditioner | CSS bottle silhouette |
 
-Product PNGs: transparent background, 1000 × 1000px. They sit in a fixed-height
-box (110px beside the text below 640px, 140px above it) with `object-fit:
-contain`, so nothing shifts when a file lands. Filenames are lowercase slugs —
+Product PNGs: transparent background, 1000 × 1000px. Each cell is image left,
+text right, with a fixed-height image box (110px, 140px in the 2 × 2 from 640px,
+110px four-up from 1024px) and `object-fit: contain`, so nothing shifts when a
+file lands. Filenames are lowercase slugs —
 the deploy filesystem is case-sensitive and spaces would need encoding.
 
 

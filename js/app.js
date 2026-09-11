@@ -309,8 +309,7 @@
       media.appendChild(img);
       media.appendChild(fallback);
 
-      /* Media, name and blurb are direct children: the cell is a subgrid, so
-         each sits on a row shared with every other cell (see .products). */
+      /* Media, name and blurb are direct children, placed by grid areas */
       item.appendChild(media);
       item.appendChild(el('p', 'product__name', product.name));
       item.appendChild(el('p', 'product__blurb', product.blurb));

@@ -809,28 +809,46 @@ dd { margin: 0; }
   color: var(--rust);
 }
 
-/* One column of cells below 640px (image left, text right); a 2 × 2 from
-   640px; four across from 1024px inside the wide band. No connector here —
-   the products are a set, not a sequence. */
+/* Every cell is the same at every width: image on the left, name over blurb
+   on the right, the pair centred on each other. One column below 640px, a
+   2 × 2 from 640px, four across from 1024px inside the wide band. Cells are
+   separated by a dotted rule — between columns where there are columns,
+   between rows on the single column. */
 .products {
+  --divider-gap: var(--space-5);   /* space either side of the dotted rule */
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-5) var(--space-4);
   width: 100%;
   text-align: left;
 }
 
-/* Each product: image on the left, name over blurb on the right */
 .product {
+  position: relative;
   display: grid;
   grid-template-columns: var(--product-box) 1fr;
   grid-template-areas:
     "media name"
     "media blurb";
   column-gap: var(--space-4);
-  row-gap: var(--space-1);
+  row-gap: var(--space-2);
   align-items: center;
   align-content: center;
+  padding-block: var(--divider-gap);
+}
+
+/* The dotted rule: spaced round dots, not the browser's dotted border, which
+   packs them edge to edge. Horizontal by default, between stacked cells. */
+.product + .product::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-image: radial-gradient(circle, var(--blush) 1.2px, transparent 1.4px);
+  background-size: 9px 3px;
+  background-repeat: repeat-x;
+  pointer-events: none;
 }
 
 /* A fixed box, so the bottles line up whatever their intrinsic ratios and
@@ -860,7 +878,9 @@ dd { margin: 0; }
   align-self: end;
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: var(--text--1);
+  font-size: var(--text--2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   line-height: var(--leading-body);
   color: var(--rust-bright);
 }
@@ -874,52 +894,47 @@ dd { margin: 0; }
   color: var(--rust);
 }
 
-/* Stacked cells from 640px: image above centred text. The row is a grid of
-   three shared rows (image, name, blurb) and each cell subgrids onto them,
-   so a three-line name in one cell cannot push its blurb below its
-   neighbours'. */
+/* Columns from 640px: the rule turns vertical and sits between neighbours */
 @media (min-width: 640px) {
   .cocktail { --product-box: 140px; }
 
   .products {
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto auto auto;
-    text-align: center;
+    row-gap: var(--divider-gap);
   }
 
   .product {
-    grid-row: span 3;
-    grid-template-columns: none;
-    grid-template-rows: subgrid;
-    grid-template-areas: none;
-    row-gap: var(--space-3);
-    justify-items: center;
-    align-items: start;
-    align-content: start;
+    padding-block: 0;
+    padding-inline: var(--divider-gap);
   }
 
-  .product__media,
-  .product__name,
-  .product__blurb { grid-area: auto; }
-
-  .product__name {
-    align-self: start;
-    max-width: 20ch;
+  .product + .product::before {
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    height: auto;
+    background-size: 3px 9px;
+    background-repeat: repeat-y;
   }
 
-  .product__blurb { max-width: 24ch; }
+  /* First cell of each row has no neighbour to its left */
+  .product:nth-child(2n + 1)::before { content: none; }
 }
 
 @media (min-width: 1024px) {
-  .products { grid-template-columns: repeat(4, 1fr); }
-}
+  /* Four cells share the band: a smaller box and tighter rule padding keep
+     the text column wide enough for the copy */
+  .cocktail { --product-box: 110px; }
 
-/* Without subgrid the cells cannot share rows. Reserve three lines for the
-   name so the blurbs at least start level. */
-@supports not (grid-template-rows: subgrid) {
-  @media (min-width: 640px) {
-    .product__name { min-height: calc(3 * var(--leading-body) * 1em); }
+  .products {
+    --divider-gap: var(--space-4);
+    grid-template-columns: repeat(4, 1fr);
   }
+
+  .product { column-gap: var(--space-3); }
+
+  .product:nth-child(2n + 1)::before { content: ""; }
+  .product:nth-child(4n + 1)::before { content: none; }
 }
 
 /* CSS silhouette shown when a product image cannot load. Same box as the image. */
