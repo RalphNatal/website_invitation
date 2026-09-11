@@ -30,7 +30,7 @@ entering a name, close the tab (the name lives in `sessionStorage`, key
 ## Files
 
 ```
-index.html        three <section> screens, all copy, inline SVG (corner sprigs, journey icons)
+index.html        three <section> screens, all copy, inline SVG (journey icons)
 css/style.css     tokens, reset, type roles, screens, content, motion
 js/app.js         PRODUCTS / EVENT config, screen toggle, guest-list gate, motion
 js/guests.js      the invite list (window.CANTU_GUESTS) — loaded before app.js
@@ -44,7 +44,9 @@ never broken without them.
 
 | Path | What | Fallback today |
 | --- | --- | --- |
-| `assets/logo-cantu.svg` | The cantu® wordmark | Text wordmark set in Jost |
+| `assets/logo-cantu.png` | The cantu® wordmark, 750 × 332 | Text wordmark set in Jost |
+| `assets/leaf.png` | Corner leaf emblem, 560 × 446, painted cream through a CSS mask | Hidden where `mask-image` is unsupported |
+| `assets/paper-texture.png` | Gate background, 1672 × 941, blended into `--rust-deep` | `--rust-deep` flat fill |
 | `assets/products/curl-cream.png` | Cantu Ultra Moisture Nourishing Curl Cream | CSS jar silhouette |
 | `assets/products/mask.png` | Cantu Ultra Moisture Nourishing Mask | CSS jar silhouette |
 | `assets/products/shampoo.png` | Cantu Ultra Moisture Nourishing Shampoo | CSS bottle silhouette |
@@ -55,8 +57,6 @@ box (110px beside the text below 640px, 140px above it) with `object-fit:
 contain`, so nothing shifts when a file lands. Filenames are lowercase slugs —
 the deploy filesystem is case-sensitive and spaces would need encoding.
 
-The corner leaf border is inline SVG in `index.html` (one `<symbol id="sprig">`,
-four rotated `<use>` references); there is no `leaf-border.svg` file.
 
 ## Where the content lives
 

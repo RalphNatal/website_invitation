@@ -233,11 +233,28 @@ body[data-screen="gate"] { background: var(--rust-deep); }
 
 /* 5a. Page 1 — the gateway ------------------------------------------------- */
 
+/* Printed stock. Layers, bottom to top:
+   1. --rust-deep — the base, so the screen is never blank while the image loads
+   2. assets/paper-texture.png, cover, centred, never tiled (photographic —
+      a repeat would seam)
+   3. a --rust-deep tint. The file is a bright terracotta; multiplying it into
+      the base and tinting back pulls it onto the palette while keeping the
+      fibre. The tokens stay authoritative, the file is not recoloured.
+   4. a faint vignette, no more than 8%, so the centre feels lit
+   The slow drift glow is a separate animated layer (::after, section 7a). */
 .screen--gate {
   display: grid;
   grid-template-rows: minmax(var(--space-8), 1fr) auto minmax(var(--space-8), 2fr);
   justify-items: center;
-  background: var(--rust-deep);
+  background-color: var(--rust-deep);
+  background-image:
+    radial-gradient(ellipse 85% 85% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.08) 100%),
+    linear-gradient(rgb(var(--rust-deep-rgb) / 0.65), rgb(var(--rust-deep-rgb) / 0.65)),
+    url("../assets/paper-texture.png");
+  background-size: auto, auto, cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-blend-mode: normal, normal, multiply;
   color: var(--ink-light);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -316,7 +333,6 @@ body[data-screen="gate"] { background: var(--rust-deep); }
    6. Content — extends the screens above. Everything here is additive.
    -------------------------------------------------------------------------- */
 
-.svg-defs { position: absolute; }
 
 /* Display scales up one step once there is room for it */
 .display { font-size: var(--text-3); }
@@ -357,50 +373,42 @@ dd { margin: 0; }
 
 .gate__content { position: relative; z-index: 2; }
 
-/* Printed stock, in three static layers on one pseudo-element, blended
-   over the rust with overlay:
-   1. grain — fractal noise rendered once into a 300px tile and repeated
-      (stitchTiles hides the seams). A viewport-sized filter is slow on phones.
-   2. mottle — three very large, very soft radial gradients, offset from one
-      another, so the field reads as unevenly inked rather than flat.
-   3. vignette — the outer edges darkened by no more than 8%, so the centre
-      feels lit.
-   None of this animates, on any motion preference: full-screen moving noise
-   is nauseating and expensive. The slow glow is a separate layer (::after,
-   section 7a). Everything readable sits above at z-index 1 or 2. */
-.screen--gate::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.07'/%3E%3C/svg%3E"),
-    radial-gradient(ellipse 90% 70% at 22% 28%, rgb(var(--cream-rgb) / 0.10), transparent 70%),
-    radial-gradient(ellipse 80% 90% at 78% 72%, rgb(0 0 0 / 0.12), transparent 70%),
-    radial-gradient(ellipse 60% 50% at 60% 12%, rgb(var(--cream-rgb) / 0.06), transparent 70%),
-    radial-gradient(ellipse 85% 85% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.08) 100%);
-  background-size: 300px 300px, auto, auto, auto, auto;
-  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
-}
-
 .sprig {
   position: absolute;
   z-index: 1;   /* above the paper, below the content */
   width: 96px;
   height: 96px;
-  color: var(--cream);
-  opacity: 0.6;
   pointer-events: none;
   transform: rotate(var(--sprig-rot, 0deg));
 }
 
 .sprig__art {
+  display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
   transform-origin: 0 0;
+}
+
+/* The leaf art is dark, and dark on --rust-deep is close to invisible. As a
+   mask its colour is thrown away and only its alpha is kept, painted cream —
+   whatever colour the file was exported in. */
+.gate__leaf {
+  background-color: var(--cream);
+  -webkit-mask-image: url("../assets/leaf.png");
+          mask-image: url("../assets/leaf.png");
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  opacity: 0.6;
+}
+
+/* Without mask support the leaf would be a cream block: show nothing instead */
+@supports not ((mask-image: url("")) or (-webkit-mask-image: url(""))) {
+  .sprig { display: none; }
 }
 
 .sprig--tl { top: 14px; left: 14px; }
@@ -1137,20 +1145,20 @@ dd { margin: 0; }
     pointer-events: none;
   }
 
+  /* Each half is a full-width copy of the gate, clipped to its own side rather
+     than sized to it: the background geometry (a cover-sized texture) is then
+     identical to the original, so nothing rescales or jumps as the doors swing. */
   .gate-fold__half {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 50%;
-    overflow: hidden;
+    inset: 0;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     transition: transform 1100ms var(--ease);
     will-change: transform;
   }
 
-  .gate-fold__half--left  { left: 0;  transform-origin: left center; }
-  .gate-fold__half--right { right: 0; transform-origin: right center; }
+  .gate-fold__half--left  { clip-path: inset(0 50% 0 0); transform-origin: left center; }
+  .gate-fold__half--right { clip-path: inset(0 0 0 50%); transform-origin: right center; }
 
   /* Inner faces darken as they turn, so the fold reads as dimensional */
   .gate-fold__half::after {
@@ -1165,17 +1173,11 @@ dd { margin: 0; }
   .gate-fold.is-open .gate-fold__half--right { transform: rotateY(105deg); }
   .gate-fold.is-open .gate-fold__half::after { background-color: rgb(var(--rust-deep-rgb) / 0.55); }
 
-  /* Each half shows its own side of a full-width clone of the gate */
   .gate-fold__clone {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 200%;
-    height: 100%;
+    inset: 0;
     min-height: 0;
   }
-
-  .gate-fold__half--right .gate-fold__clone { left: -100%; }
 
   .gate-fold .sprig__art,
   .gate-fold .screen--gate::after { animation: none; }

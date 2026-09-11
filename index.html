@@ -12,49 +12,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Jost:wght@300;400&family=Playfair+Display:ital,wght@0,700;1,700&display=swap">
 
+  <link rel="preload" as="image" href="assets/paper-texture.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-screen="gate">
-
-  <!-- Shared SVG geometry. Lives outside the screens so it is never inside a
-       hidden section (WebKit will not render a <use> whose target is). -->
-  <svg class="svg-defs" aria-hidden="true" focusable="false" width="0" height="0">
-    <defs>
-      <!-- One corner sprig, drawn for the top-left corner. The other three
-           corners rotate it. Stroke only, engraving weight. -->
-      <symbol id="sprig" viewBox="0 0 100 100">
-        <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-          <defs><path id="sprig-leaf" vector-effect="non-scaling-stroke" d="M0 0C3-4.2 8.5-4.2 12 0 8.5 4.2 3 4.2 0 0ZM0 0h9"/></defs>
-          <path vector-effect="non-scaling-stroke" d="M4 4C22 6 44 16 62 36"/>
-          <path vector-effect="non-scaling-stroke" d="M4 4C6 22 16 44 36 62"/>
-          <path vector-effect="non-scaling-stroke" d="M4 4C10 10 15 17 18 25"/>
-          <circle vector-effect="non-scaling-stroke" cx="18.5" cy="26" r="1.6"/>
-          <use href="#sprig-leaf" transform="translate(24 9.1) rotate(-33)"/>
-          <use href="#sprig-leaf" transform="translate(39 16.7) rotate(75)"/>
-          <use href="#sprig-leaf" transform="translate(53.7 27.7) rotate(-13) scale(.9)"/>
-          <use href="#sprig-leaf" transform="translate(62 36) rotate(48) scale(1.05)"/>
-          <use href="#sprig-leaf" transform="translate(9.1 24) rotate(123)"/>
-          <use href="#sprig-leaf" transform="translate(16.7 39) rotate(15)"/>
-          <use href="#sprig-leaf" transform="translate(27.7 53.7) rotate(103) scale(.9)"/>
-          <use href="#sprig-leaf" transform="translate(36 62) rotate(42) scale(1.05)"/>
-        </g>
-      </symbol>
-    </defs>
-  </svg>
 
   <main class="app" id="app">
 
     <!-- 1 · The gateway -->
     <section class="screen screen--gate" id="screen-gate" aria-labelledby="gate-title">
 
-      <div class="sprig sprig--tl" aria-hidden="true"><svg class="sprig__art" focusable="false"><use href="#sprig"/></svg></div>
-      <div class="sprig sprig--tr" aria-hidden="true"><svg class="sprig__art" focusable="false"><use href="#sprig"/></svg></div>
-      <div class="sprig sprig--br" aria-hidden="true"><svg class="sprig__art" focusable="false"><use href="#sprig"/></svg></div>
-      <div class="sprig sprig--bl" aria-hidden="true"><svg class="sprig__art" focusable="false"><use href="#sprig"/></svg></div>
+      <!-- Corner leaves: assets/leaf.png painted cream through a CSS mask.
+           The outer .sprig carries the corner offset and rotation, the inner
+           .sprig__art the sway — the same geometry the engraved sprigs used. -->
+      <div class="sprig sprig--tl" aria-hidden="true"><span class="sprig__art gate__leaf"></span></div>
+      <div class="sprig sprig--tr" aria-hidden="true"><span class="sprig__art gate__leaf"></span></div>
+      <div class="sprig sprig--br" aria-hidden="true"><span class="sprig__art gate__leaf"></span></div>
+      <div class="sprig sprig--bl" aria-hidden="true"><span class="sprig__art gate__leaf"></span></div>
 
       <div class="gate__content">
         <h1 class="gate__logo" id="gate-title" tabindex="-1">
-          <img class="gate__logo-img" src="assets/logo-cantu.svg" alt="Cantu" data-guard>
+          <img class="gate__logo-img" src="assets/logo-cantu.png" width="750" height="332" alt="Cantu" data-guard>
           <span class="gate__logo-text" data-fallback hidden>cantu<sup>&reg;</sup></span>
         </h1>
         <form class="gate__form" id="gate-form" novalidate>
