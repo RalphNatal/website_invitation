@@ -1,7 +1,8 @@
 /* ==========================================================================
    The Cantu Collective — invitation
    Vanilla CSS, mobile-first (designed at 390px). Desktop is the same centred
-   column, never wider than --measure. Stationery, not a web layout.
+   column, never wider than --measure, except the journey and product rows,
+   which sit in a --measure-wide band. Stationery, not a web layout.
    ========================================================================== */
 
 
@@ -59,6 +60,7 @@
   --space-9: 6rem;
 
   --measure: 40rem;          /* 640px column */
+  --measure-wide: 68rem;     /* 1088px — wide bands only */
   --gutter:  var(--space-4);
 
   /* Motion */
@@ -218,6 +220,13 @@ body[data-screen="gate"] { background: var(--rust-deep); }
 .screen__inner {
   width: 100%;
   max-width: var(--measure);
+  margin-inline: auto;
+}
+
+/* A wide band beside the column, for rows that need more than --measure.
+   Sized against its container, never 100vw, so a scrollbar never overflows. */
+.band--wide {
+  width: min(var(--measure-wide), 100% - (var(--gutter) * 2));
   margin-inline: auto;
 }
 
@@ -566,13 +575,28 @@ dd { margin: 0; }
 
 /* 6c. Page 3 — journey, cocktail, panel, footer --------------------------- */
 
+/* No side padding on this screen: the wide bands measure against the
+   viewport, the narrow column carries its own gutter, and the panel and
+   footer span the width without negative margins. */
 .screen--assess {
-  padding-bottom: 0;   /* the panel runs to the bottom edge */
+  padding-inline: 0;
+  padding-bottom: 0;   /* the footer runs to the bottom edge */
 }
 
 .screen--assess .screen__inner {
   display: grid;
   row-gap: var(--space-9);
+}
+
+.assess__content {
+  display: grid;
+  row-gap: var(--space-9);
+}
+
+/* The column's gutter, now that the screen has none */
+.assess__content .screen__inner {
+  max-width: calc(var(--measure) + var(--gutter) * 2);
+  padding-inline: var(--gutter);
 }
 
 .block {
@@ -592,6 +616,7 @@ dd { margin: 0; }
   row-gap: var(--journey-gap);
   width: 100%;
   max-width: 34rem;
+  margin-inline: auto;
   text-align: left;
 }
 
@@ -679,6 +704,63 @@ dd { margin: 0; }
   color: var(--rust);
 }
 
+/* From 768px the journey is a row: four stacked, centred steps joined by one
+   horizontal rule. The vertical connector above is switched off here and
+   the horizontal one exists only here, so the two never draw together. */
+@media (min-width: 768px) {
+  .journey {
+    position: relative;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+    max-width: none;
+    text-align: center;
+  }
+
+  /* One rule at circle-centre height, from the first circle's centre to the
+     last's (half a column in from each edge). The circles are filled so it
+     passes behind them. Not drawn for a lone step. */
+  .journey::before {
+    content: "";
+    position: absolute;
+    top: calc(var(--journey-icon) / 2);
+    left: 12.5%;
+    right: 12.5%;
+    height: 1px;
+    z-index: 0;
+    background: var(--blush);
+    pointer-events: none;
+  }
+
+  .journey:has(.journey__step:only-child)::before { display: none; }
+
+  .journey__step {
+    grid-template-columns: none;
+    justify-items: center;
+    row-gap: var(--space-3);
+  }
+
+  /* Vertical connector off */
+  .journey__step:not(:last-child)::before { display: none; }
+
+  /* The ::after becomes a right-pointing chevron, centred in the gap */
+  .journey__step:not(:last-child)::after {
+    top: calc(var(--journey-icon) / 2);
+    right: calc(-1 * var(--space-5) / 2);
+    bottom: auto;
+    left: auto;
+    transform: translate(50%, -50%) rotate(-45deg);
+  }
+
+  .journey__icon { background: var(--sand); }
+
+  .journey__text { justify-items: center; }
+
+  .journey__copy {
+    max-width: 24ch;
+    margin-inline: auto;
+  }
+}
+
 /* Your hair cocktail */
 
 .cocktail {
@@ -701,18 +783,15 @@ dd { margin: 0; }
   color: var(--rust);
 }
 
-/* One column of cells, two once there is room. Five across would need a
-   wider column than --measure allows and is not forced. */
+/* One column of cells below 640px (image left, text right); two stacked
+   columns from 640px; five across from 1024px inside the wide band. No
+   connector here — the products are a set, not a sequence. */
 .products {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-5) var(--space-5);
   width: 100%;
   text-align: left;
-}
-
-@media (min-width: 560px) {
-  .products { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Each product: image on the left, name and blurb on the right */
@@ -754,6 +833,47 @@ dd { margin: 0; }
   font-weight: 400;
   line-height: var(--leading-body);
   color: var(--rust);
+}
+
+/* Stacked cells: image above centred text, rows top-aligned */
+@media (min-width: 640px) {
+  .cocktail {
+    --product-img-w: 120px;
+    --product-img-h: 120px;
+  }
+
+  .products {
+    grid-template-columns: repeat(2, 1fr);
+    align-items: start;
+    text-align: center;
+  }
+
+  .product {
+    grid-template-columns: none;
+    justify-items: center;
+    row-gap: var(--space-3);
+  }
+
+  /* An odd last cell spans the row and sits centred, instead of hanging left */
+  .product:last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+  .product__text { justify-items: center; }
+
+  .product__name {
+    max-width: 18ch;
+    margin-inline: auto;
+  }
+
+  .product__blurb {
+    max-width: 22ch;
+    margin-inline: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .products { grid-template-columns: repeat(5, 1fr); }
+
+  .product:last-child:nth-child(odd) { grid-column: auto; }
 }
 
 /* CSS silhouette shown when a product image cannot load. Same box as the image. */
@@ -809,7 +929,7 @@ dd { margin: 0; }
 
 .panel {
   margin-top: var(--space-9);
-  margin-inline: calc(-1 * var(--gutter));
+  margin-inline: 0;   /* the screen has no side padding; nothing to break out of */
   padding: var(--space-8) var(--gutter);
   background: var(--rust-deep);
   color: var(--ink-light);
@@ -846,12 +966,12 @@ dd { margin: 0; }
 .panel .link-quiet { color: var(--blush); }
 .panel .link-quiet:hover { color: var(--ink-light); }
 
-/* The footer bar — full-bleed rust, the last thing on the page. Like the
-   panel it breaks out with negative margins against the body width, not
-   100vw, so a scrollbar never adds horizontal scroll. */
+/* The footer bar — full-bleed rust, the last thing on the page. Spans the
+   screen naturally (no side padding there), never 100vw, so a scrollbar
+   never adds horizontal scroll. */
 
 .footer {
-  margin-inline: calc(-1 * var(--gutter));
+  margin-inline: 0;
   padding: var(--space-4) var(--gutter);
   padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
   background: var(--rust);

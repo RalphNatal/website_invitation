@@ -52,8 +52,8 @@ never broken without them.
 | `assets/products/nourishing-shampoo.png` | Cantu Shea Butter Nourishing Shampoo | CSS bottle silhouette |
 
 Product PNGs: transparent background, roughly 800px tall. They are displayed
-in a fixed 80 × 110px box with `object-fit: contain`, so nothing shifts when
-a file lands.
+in a fixed box (80 × 110px beside the text below 640px, 120 × 120px above it)
+with `object-fit: contain`, so nothing shifts when a file lands.
 
 The corner leaf border is inline SVG in `index.html` (one `<symbol id="sprig">`,
 four rotated `<use>` references); there is no `leaf-border.svg` file.

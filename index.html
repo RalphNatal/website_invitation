@@ -113,67 +113,78 @@
 
     <!-- 3 · Assessment & hair cocktail -->
     <section class="screen screen--assess" id="screen-assess" aria-labelledby="assess-title" hidden>
-      <div class="screen__inner">
+      <!-- Headings sit in the narrow column; the journey and product rows sit
+           beside it in .band--wide, so they can be wider than --measure. -->
+      <div class="assess__content">
 
-        <!-- a) The journey — a column at every width. The <ol> already tells
-             assistive tech "1 of 4", so the printed numerals are decorative. -->
+        <!-- a) The journey — a column below 768px, a row above. The <ol>
+             already tells assistive tech "1 of 4", so the printed numerals
+             are decorative. -->
         <div class="block">
-          <h1 class="display block__title" id="assess-title" tabindex="-1" data-reveal>The journey</h1>
-          <ol class="journey" role="list">
-            <li class="journey__step" data-reveal>
-              <span class="journey__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false"><path d="M3.5 6.5h17v11h-17z"/><path d="M3.5 7l8.5 6.5L20.5 7"/></svg>
-              </span>
-              <div class="journey__text">
-                <span class="journey__num" aria-hidden="true">1</span>
-                <h2 class="label journey__title">You&rsquo;re invited</h2>
-                <p class="journey__copy">Receive your exclusive digital invitation to The Cantu Collective.</p>
-              </div>
-            </li>
-            <li class="journey__step" data-reveal>
-              <span class="journey__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false"><path d="M9 4.5h6V7H9z"/><path d="M15 5.5h3.5v14h-13v-14H9"/><path d="M9 11.5h6M9 15h4"/></svg>
-              </span>
-              <div class="journey__text">
-                <span class="journey__num" aria-hidden="true">2</span>
-                <h2 class="label journey__title">Complete your hair profile</h2>
-                <p class="journey__copy">Answer a few questions so we can get to know your hair, your journey, and your goals.</p>
-              </div>
-            </li>
-            <li class="journey__step" data-reveal>
-              <span class="journey__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false"><path d="M11 5c.4 4.6 3.4 7.6 8 8-4.6.4-7.6 3.4-8 8-.4-4.6-3.4-7.6-8-8 4.6-.4 7.6-3.4 8-8z"/><path d="M18.5 3v4M16.5 5h4"/></svg>
-              </span>
-              <div class="journey__text">
-                <span class="journey__num" aria-hidden="true">3</span>
-                <h2 class="label journey__title">Discover your matches</h2>
-                <p class="journey__copy">Unlock your personalized Hair Cocktail + Signature Cocktail Pairing.</p>
-              </div>
-            </li>
-            <li class="journey__step" data-reveal>
-              <span class="journey__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false"><path d="M8 4.5h8a1 1 0 0 1 1 1v6H7v-6a1 1 0 0 1 1-1z"/><path d="M5.5 11.5h13v3h-13z"/><path d="M12 14.5v5M7.5 19.5h9"/></svg>
-              </span>
-              <div class="journey__text">
-                <span class="journey__num" aria-hidden="true">4</span>
-                <h2 class="label journey__title">We&rsquo;ll see you there</h2>
-                <p class="journey__copy">Your personalized Hair Prescription will be ready at your styling station.</p>
-              </div>
-            </li>
-          </ol>
+          <div class="screen__inner">
+            <h1 class="display block__title" id="assess-title" tabindex="-1" data-reveal>The journey</h1>
+          </div>
+          <div class="band--wide">
+            <ol class="journey" role="list">
+              <li class="journey__step" data-reveal>
+                <span class="journey__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false"><path d="M3.5 6.5h17v11h-17z"/><path d="M3.5 7l8.5 6.5L20.5 7"/></svg>
+                </span>
+                <div class="journey__text">
+                  <span class="journey__num" aria-hidden="true">1</span>
+                  <h2 class="label journey__title">You&rsquo;re invited</h2>
+                  <p class="journey__copy">Receive your exclusive digital invitation to The Cantu Collective.</p>
+                </div>
+              </li>
+              <li class="journey__step" data-reveal>
+                <span class="journey__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false"><path d="M9 4.5h6V7H9z"/><path d="M15 5.5h3.5v14h-13v-14H9"/><path d="M9 11.5h6M9 15h4"/></svg>
+                </span>
+                <div class="journey__text">
+                  <span class="journey__num" aria-hidden="true">2</span>
+                  <h2 class="label journey__title">Complete your hair profile</h2>
+                  <p class="journey__copy">Answer a few questions so we can get to know your hair, your journey, and your goals.</p>
+                </div>
+              </li>
+              <li class="journey__step" data-reveal>
+                <span class="journey__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false"><path d="M11 5c.4 4.6 3.4 7.6 8 8-4.6.4-7.6 3.4-8 8-.4-4.6-3.4-7.6-8-8 4.6-.4 7.6-3.4 8-8z"/><path d="M18.5 3v4M16.5 5h4"/></svg>
+                </span>
+                <div class="journey__text">
+                  <span class="journey__num" aria-hidden="true">3</span>
+                  <h2 class="label journey__title">Discover your matches</h2>
+                  <p class="journey__copy">Unlock your personalized Hair Cocktail + Signature Cocktail Pairing.</p>
+                </div>
+              </li>
+              <li class="journey__step" data-reveal>
+                <span class="journey__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false"><path d="M8 4.5h8a1 1 0 0 1 1 1v6H7v-6a1 1 0 0 1 1-1z"/><path d="M5.5 11.5h13v3h-13z"/><path d="M12 14.5v5M7.5 19.5h9"/></svg>
+                </span>
+                <div class="journey__text">
+                  <span class="journey__num" aria-hidden="true">4</span>
+                  <h2 class="label journey__title">We&rsquo;ll see you there</h2>
+                  <p class="journey__copy">Your personalized Hair Prescription will be ready at your styling station.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
         </div>
 
         <!-- b) Your hair cocktail — the strip reveals as one block, not per product -->
         <div class="block cocktail" data-reveal>
-          <div class="cocktail__intro">
-            <h2 class="label cocktail__label">Your hair cocktail could include</h2>
-            <!-- TODO: a one-line intro for the Shea Butter range goes here as
-                 <p class="cocktail__copy">. The previous line (Batana Oil +
-                 Jamaican Black Castor Oil, five days of moisture) was Ultra
-                 Moisture copy — none of the five products below contain those
-                 oils, so it was removed rather than left as a false claim. -->
+          <div class="screen__inner">
+            <div class="cocktail__intro">
+              <h2 class="label cocktail__label">Your hair cocktail could include</h2>
+              <!-- TODO: a one-line intro for the Shea Butter range goes here as
+                   <p class="cocktail__copy">. The previous line (Batana Oil +
+                   Jamaican Black Castor Oil, five days of moisture) was Ultra
+                   Moisture copy — none of the five products below contain those
+                   oils, so it was removed rather than left as a false claim. -->
+            </div>
           </div>
-          <ul class="products" id="products" role="list"></ul>
+          <div class="band--wide">
+            <ul class="products" id="products" role="list"></ul>
+          </div>
         </div>
 
       </div>
