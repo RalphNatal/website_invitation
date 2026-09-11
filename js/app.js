@@ -8,17 +8,36 @@
   'use strict';
 
   /* ------------------------------------------------------------------------
-     Editable content — product names, image paths and event details live
-     here and nowhere else. Captions are shown uppercase by CSS.
+     Editable content — product names, blurbs, image paths and event details
+     live here and nowhere else. `name` is both the label and the alt text.
      `shape` picks the CSS silhouette used if an image cannot load:
-     'bottle' | 'jar' | 'tube'.
+     'bottle' | 'jar' | 'jar-wide' | 'tube'.
      ------------------------------------------------------------------------ */
 
+  /* Previous line — Ultra Moisture */
+  // const PRODUCTS = [
+  //   { caption: 'Cleanse', name: 'Ultra Moisture Nourishing Shampoo',              src: 'assets/products/cleanse.png', shape: 'bottle' },
+  //   { caption: 'Restore', name: 'Ultra Moisture Nourishing Mask',                 src: 'assets/products/restore.png', shape: 'jar' },
+  //   { caption: 'Define',  name: 'Ultra Moisture Nourishing Curling Cream',        src: 'assets/products/define.png',  shape: 'jar' },
+  //   { caption: 'Protect', name: 'Ultra Moisture Nourishing Leave-In Conditioner', src: 'assets/products/protect.png', shape: 'tube' }
+  // ];
+
   const PRODUCTS = [
-    { caption: 'Cleanse', name: 'Ultra Moisture Nourishing Shampoo',              src: 'assets/products/cleanse.png', shape: 'bottle' },
-    { caption: 'Restore', name: 'Ultra Moisture Nourishing Mask',                 src: 'assets/products/restore.png', shape: 'jar' },
-    { caption: 'Define',  name: 'Ultra Moisture Nourishing Curling Cream',        src: 'assets/products/define.png',  shape: 'jar' },
-    { caption: 'Protect', name: 'Ultra Moisture Nourishing Leave-In Conditioner', src: 'assets/products/protect.png', shape: 'tube' }
+    { name: 'Cantu Shea Butter Hydrating Cream Conditioner',
+      blurb: 'Deeply moisturizes and helps strengthen strands while reducing breakage.',
+      src: 'assets/products/hydrating-conditioner.png', shape: 'bottle' },
+    { name: 'Cantu Shea Butter for Natural Curls Curl Activator Cream',
+      blurb: 'Enhances curl pattern, adds definition, and reduces frizz.',
+      src: 'assets/products/curl-activator.png', shape: 'jar' },
+    { name: 'Cantu Shea Butter Coconut Curling Cream',
+      blurb: 'Moisturizes and defines curls with long-lasting hold and shine.',
+      src: 'assets/products/coconut-curling-cream.png', shape: 'jar' },
+    { name: 'Cantu Shea Butter Moisturizing Twist & Lock Gel',
+      blurb: 'Controls frizz and helps hold styles in place.',
+      src: 'assets/products/twist-lock-gel.png', shape: 'jar-wide' },
+    { name: 'Cantu Shea Butter Nourishing Shampoo',
+      blurb: 'Gentle cleanse that removes buildup while restoring natural moisture.',
+      src: 'assets/products/nourishing-shampoo.png', shape: 'bottle' }
   ];
 
   const EVENT = {
@@ -279,7 +298,6 @@
 
     PRODUCTS.forEach(function (product) {
       const item = el('li', 'product');
-      const figure = el('figure', 'product__figure');
       const media = el('div', 'product__media');
 
       const img = document.createElement('img');
@@ -297,9 +315,13 @@
 
       media.appendChild(img);
       media.appendChild(fallback);
-      figure.appendChild(media);
-      figure.appendChild(el('figcaption', 'label product__caption', product.caption));
-      item.appendChild(figure);
+
+      const text = el('div', 'product__text');
+      text.appendChild(el('p', 'product__name', product.name));
+      text.appendChild(el('p', 'product__blurb', product.blurb));
+
+      item.appendChild(media);
+      item.appendChild(text);
       list.appendChild(item);
     });
   }

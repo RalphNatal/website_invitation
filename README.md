@@ -45,13 +45,15 @@ never broken without them.
 | Path | What | Fallback today |
 | --- | --- | --- |
 | `assets/logo-cantu.svg` | The cantu® wordmark | Text wordmark set in Jost |
-| `assets/products/cleanse.png` | Ultra Moisture Nourishing Shampoo | CSS bottle silhouette |
-| `assets/products/restore.png` | Ultra Moisture Nourishing Mask | CSS jar silhouette |
-| `assets/products/define.png` | Ultra Moisture Nourishing Curling Cream | CSS jar silhouette |
-| `assets/products/protect.png` | Ultra Moisture Nourishing Leave-In Conditioner | CSS tube silhouette |
+| `assets/products/hydrating-conditioner.png` | Cantu Shea Butter Hydrating Cream Conditioner | CSS bottle silhouette |
+| `assets/products/curl-activator.png` | Cantu Shea Butter for Natural Curls Curl Activator Cream | CSS jar silhouette |
+| `assets/products/coconut-curling-cream.png` | Cantu Shea Butter Coconut Curling Cream | CSS jar silhouette |
+| `assets/products/twist-lock-gel.png` | Cantu Shea Butter Moisturizing Twist & Lock Gel | CSS wide-jar silhouette |
+| `assets/products/nourishing-shampoo.png` | Cantu Shea Butter Nourishing Shampoo | CSS bottle silhouette |
 
-Product PNGs: transparent background, roughly 800px tall. They are displayed at
-a maximum height of 180px with `object-fit: contain`.
+Product PNGs: transparent background, roughly 800px tall. They are displayed
+in a fixed 80 × 110px box with `object-fit: contain`, so nothing shifts when
+a file lands.
 
 The corner leaf border is inline SVG in `index.html` (one `<symbol id="sprig">`,
 four rotated `<use>` references); there is no `leaf-border.svg` file.
@@ -60,8 +62,12 @@ four rotated `<use>` references); there is no `leaf-border.svg` file.
 
 All editable content is at the top of `js/app.js`:
 
-- `PRODUCTS` — caption, full product name (used as `alt`), image path, and
-  `shape` (`bottle` | `jar` | `tube`) for the CSS fallback.
+- `PRODUCTS` — full product name (the label, also used as `alt`), blurb,
+  image path, and `shape` (`bottle` | `jar` | `jar-wide` | `tube`) for the
+  CSS fallback. The previous Ultra Moisture line sits commented out directly
+  above it. The one-line intro under the strip heading is a `TODO` in
+  `index.html` — the old Batana Oil line was Ultra Moisture copy and does
+  not apply to the Shea Butter range.
 - `EVENT` — `date`, `time`, `location`. The time uses a true em dash.
   The date is still the deck's **June 21, 2024**, marked with a `TODO` —
   it has not been replaced with an invented one.

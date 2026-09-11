@@ -13,7 +13,7 @@
   /* Palette — sampled from the client deck. This is the whole set. */
   --rust-deep:   #712312;   /* deep brick — Page 1 + QR panel background */
   --rust:        #8A3624;   /* primary text + rules on cream */
-  --rust-bright: #9C3618;   /* small accent: icons, product captions only */
+  --rust-bright: #9C3618;   /* small accent: journey titles, product names only */
   --cream:       #FDF7F1;   /* invitation card stock */
   --sand:        #F1E2D5;   /* warm section background */
   --blush:       #DE9078;   /* hairlines, thin frames */
@@ -681,6 +681,11 @@ dd { margin: 0; }
 
 /* Your hair cocktail */
 
+.cocktail {
+  --product-img-w: 80px;    /* image column; the fallback shares the box */
+  --product-img-h: 110px;
+}
+
 .cocktail__intro {
   display: grid;
   justify-items: center;
@@ -689,51 +694,74 @@ dd { margin: 0; }
 
 .cocktail__label { color: var(--taupe); }
 
+/* The one-line range intro (see the TODO in index.html) */
 .cocktail__copy {
   max-width: 34ch;
   font-weight: 300;
   color: var(--rust);
 }
 
+/* One column of cells, two once there is room. Five across would need a
+   wider column than --measure allows and is not forced. */
 .products {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-6) var(--space-4);
+  grid-template-columns: 1fr;
+  gap: var(--space-5) var(--space-5);
   width: 100%;
+  text-align: left;
 }
 
-@media (min-width: 768px) {
-  .products { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 560px) {
+  .products { grid-template-columns: repeat(2, 1fr); }
 }
 
-.product__figure {
+/* Each product: image on the left, name and blurb on the right */
+.product {
   display: grid;
-  justify-items: center;
-  row-gap: var(--space-3);
+  grid-template-columns: var(--product-img-w) 1fr;
+  column-gap: var(--space-4);
+  align-items: center;
 }
 
 .product__media {
   display: grid;
   place-items: center;
-  width: 100%;
-  height: 180px;
+  width: var(--product-img-w);
+  height: var(--product-img-h);   /* fixed box: nothing moves when the PNG lands */
 }
 
 .product__media img {
-  max-height: 180px;
-  width: auto;
-  max-width: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
-.product__caption { color: var(--rust-bright); }
+.product__text {
+  display: grid;
+  row-gap: var(--space-1);
+}
+
+.product__name {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text--1);
+  line-height: var(--leading-body);
+  color: var(--rust-bright);
+}
+
+.product__blurb {
+  font-size: var(--text--2);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  color: var(--rust);
+}
 
 /* CSS silhouette shown when a product image cannot load. Same box as the image. */
 .product__fallback {
   display: grid;
   place-items: center;
   width: 100%;
-  height: 180px;
+  height: 100%;
   background: var(--cream);
 }
 
@@ -759,12 +787,14 @@ dd { margin: 0; }
   background: var(--sand);
 }
 
-.bottle--bottle { --b-w: 46px; --b-h: 112px; --b-r: 14px 14px 8px 8px; --c-w: 18px; --c-h: 18px; }
-.bottle--jar    { --b-w: 78px; --b-h: 62px;  --b-r: 6px 6px 12px 12px;  --c-w: 74px; --c-h: 16px; --c-r: 5px 5px 0 0; }
+/* Sized to the 80 × 110 box: tall bottle, squat jar, short wide jar */
+.bottle--bottle   { --b-w: 32px; --b-h: 72px; --b-r: 10px 10px 6px 6px; --c-w: 13px; --c-h: 13px; }
+.bottle--jar      { --b-w: 54px; --b-h: 42px; --b-r: 5px 5px 9px 9px;   --c-w: 50px; --c-h: 12px; --c-r: 4px 4px 0 0; }
+.bottle--jar-wide { --b-w: 64px; --b-h: 30px; --b-r: 4px 4px 8px 8px;   --c-w: 60px; --c-h: 9px;  --c-r: 3px 3px 0 0; }
 
 /* A squeeze tube stands on its cap: crimped flat top, tapering into the cap. */
 .bottle--tube {
-  --b-w: 44px; --b-h: 104px; --b-r: 4px 4px 22px 22px / 4px 4px 70px 70px; --c-w: 24px; --c-h: 14px;
+  --b-w: 30px; --b-h: 68px; --b-r: 3px 3px 15px 15px / 3px 3px 46px 46px; --c-w: 16px; --c-h: 10px;
   margin-top: 0;
   margin-bottom: var(--c-h);
 }
@@ -772,7 +802,7 @@ dd { margin: 0; }
 .bottle--tube::before {
   bottom: auto;
   top: 100%;
-  border-radius: 0 0 3px 3px;
+  border-radius: 0 0 2px 2px;
 }
 
 /* The panel */
