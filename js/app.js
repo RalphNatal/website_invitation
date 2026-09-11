@@ -28,8 +28,8 @@
     location: 'New York City'
   };
 
-  const TALLY_EMBED = 'https://tally.so/embed/GxGARj';
-  const TALLY_WIDGET = 'https://tally.so/widgets/embed.js';
+  /* The assessment form. The guest's name is appended as ?name= (encoded). */
+  const ASSESSMENT_URL = 'https://tally.so/r/GxGARj';
   const STORAGE_KEY = 'cantu.guestName';
 
   /* Letters (any script), combining marks, apostrophes, spaces and hyphens; 1–40. */
@@ -80,7 +80,6 @@
 
   /* Per-screen work that must wait until the section is actually visible. */
   function afterShow(name) {
-    if (name === 'assess') initTally();
     if (name !== 'gate') enterScreen(screenEl[name]);
   }
 
@@ -307,7 +306,7 @@
 
   /* ------------------------------------------------------------------------
      Guest name — untrusted input. It reaches the DOM only via textContent
-     and the Tally URL only via encodeURIComponent.
+     and the assessment URL only via encodeURIComponent.
      ------------------------------------------------------------------------ */
 
   let guestName = '';
@@ -358,6 +357,10 @@
     /* Long names step the hero size down in proportion so the card never breaks. */
     const scale = name.length > NAME_SCALE_FROM ? NAME_SCALE_FROM / name.length : 1;
     target.style.setProperty('--name-scale', String(Math.max(scale, 0.55)));
+
+    /* The desktop link to the assessment carries the same name the QR will. */
+    const link = document.getElementById('assessment-link');
+    if (link) link.href = ASSESSMENT_URL + '?name=' + encodeURIComponent(name);
   }
 
   /* Page 1 form: validate, store, advance. */
@@ -419,48 +422,6 @@
     if (stored && isValidName(stored)) return stored;
 
     return '';
-  }
-
-
-  /* ------------------------------------------------------------------------
-     Tally — the src is built here so the guest's name is in it before the
-     widget script runs. Loaded once, the first time Page 3 is shown.
-     ------------------------------------------------------------------------ */
-
-  let tallyStarted = false;
-
-  function initTally() {
-    if (tallyStarted) return;
-    tallyStarted = true;
-
-    const frame = document.getElementById('tally-frame');
-    if (!frame) return;
-
-    let src = TALLY_EMBED + '?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1';
-    if (guestName) src += '&name=' + encodeURIComponent(guestName);
-    frame.setAttribute('data-tally-src', src);
-
-    /* dynamicHeight arrives by postMessage once the form is up. If the frame
-       is still at its initial height a while after loading, give it a fixed
-       minimum rather than a nested scrollbar. */
-    frame.addEventListener('load', function () {
-      setTimeout(function () {
-        if (frame.offsetHeight < 260) frame.classList.add('tally__frame--fixed');
-      }, 3000);
-    }, { once: true });
-
-    const script = document.createElement('script');
-    script.src = TALLY_WIDGET;
-    script.async = true;
-    script.onload = function () {
-      if (window.Tally && typeof window.Tally.loadEmbeds === 'function') window.Tally.loadEmbeds();
-    };
-    script.onerror = function () {
-      /* Widget blocked: load the form directly, at the fixed height. */
-      frame.src = src;
-      frame.classList.add('tally__frame--fixed');
-    };
-    document.body.appendChild(script);
   }
 
 

@@ -2,11 +2,13 @@
 
 A single-page, three-screen invitation for the Cantu Collective event. A guest
 signs their name on the gate, the invitation unfolds, and the assessment page
-carries the guest flow, the hair cocktail products, and the Tally survey
-pre-filled with their name.
+carries the guest flow, the hair cocktail products, and the way into the
+hair assessment — a QR code, plus a link for desktop — with their name
+already in the URL.
 
 Vanilla HTML, CSS and JavaScript. No build step, no bundler, no npm install.
-The only external resources are Google Fonts and Tally's embed script.
+The only external resource loaded is Google Fonts. The assessment itself is
+a Tally form that opens in a new tab; nothing from Tally is embedded.
 
 ## Run it
 
@@ -29,7 +31,7 @@ entering a name, close the tab (the name lives in `sessionStorage`, key
 ```
 index.html        three <section> screens, all copy, inline SVG (corner sprigs, flow icons)
 css/style.css     tokens, reset, type roles, screens, content, motion
-js/app.js         PRODUCTS / EVENT config, screen toggle, name handling, Tally, motion
+js/app.js         PRODUCTS / EVENT config, screen toggle, name handling, motion
 assets/           supplied artwork (see below)
 ```
 
@@ -61,8 +63,8 @@ All editable content is at the top of `js/app.js`:
 - `EVENT` — `date`, `time`, `location`. The time uses a true em dash.
   The date is still the deck's **June 21, 2024**, marked with a `TODO` —
   it has not been replaced with an invented one.
-- `TALLY_EMBED` — the Tally form URL. The guest's name is appended as
-  `?name=` (URL-encoded) before the widget script loads.
+- `ASSESSMENT_URL` — the Tally form URL. The guest's name is appended as
+  `?name=` (URL-encoded) to the "Open the assessment" link on Page 3.
 
 Everything else — the Page 2 card copy, the five guest-flow steps, the panel —
 is plain text in `index.html`.
@@ -70,9 +72,14 @@ is plain text in `index.html`.
 ## The QR code
 
 The QR square on the assessment panel is a labelled placeholder. Once the site
-has a deploy URL, the QR should encode that URL with the guest's name as a
-query parameter, e.g. `https://<deploy-url>/?name=Jasmine`, which skips the
-gate and opens straight onto the invitation.
+has a deploy URL it should encode `https://tally.so/r/GxGARj?name={encoded}` —
+the same URL the "Open the assessment" link beneath it already carries — so a
+phone scan and a desktop click land on the same pre-filled form.
+
+The Tally form is deliberately not embedded: as an iframe on the rust panel it
+rendered its own dark type, its own cover and heading, asked for the name a
+second time, and showed a required-field error before the guest had typed.
+An iframe's internals are not ours to style, so it opens in a new tab instead.
 
 ## Behaviour notes
 
@@ -80,10 +87,6 @@ gate and opens straight onto the invitation.
   spaces, hyphens and apostrophes. Input is trimmed, internal whitespace is
   collapsed, curly apostrophes are straightened, and the result is
   title-cased. The same rule validates `?name=`.
-- **Tally height.** The embed uses `dynamicHeight=1`. If the frame has not been
-  resized 3s after it loads (or the widget script is blocked), a
-  `min-height: 640px` fallback is applied so there is never a nested
-  scrollbar.
 - **Reduced motion.** Every animation sits behind
   `@media (prefers-reduced-motion: no-preference)`. With reduced motion on,
   screens change instantly and everything is visible.

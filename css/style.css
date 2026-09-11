@@ -799,24 +799,10 @@ dd { margin: 0; }
 
 .qr__label { color: var(--taupe); }
 
-.tally {
-  width: 100%;
-  margin-top: var(--space-6);
-}
-
-.tally__frame {
-  display: block;
-  width: 100%;
-  border: 0;
-}
-
-/* Applied by JS only if Tally's dynamicHeight never resizes the frame. */
-.tally__frame--fixed { min-height: 640px; }
-
-.tally__frame:focus-visible {
-  outline: 2px solid var(--blush);
-  outline-offset: 4px;
-}
+/* Desktop fallback link: the light-on-rust variant used on Page 1 */
+.panel__link { margin-top: var(--space-2); }
+.panel .link-quiet { color: var(--blush); }
+.panel .link-quiet:hover { color: var(--ink-light); }
 
 
 /* --------------------------------------------------------------------------

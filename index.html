@@ -181,14 +181,17 @@
           <p class="label">Your journey</p>
           <h2 class="display display--sentence panel__title">Start your hair <em>assessment.</em></h2>
           <p class="panel__copy">Scan to begin your personalized Cantu Hair Prescription.</p>
+          <!-- Placeholder. Once the site has a deploy URL this square will encode
+               https://tally.so/r/GxGARj?name={encoded guest name} — the same URL
+               the link below carries — so a phone scan and a desktop click land
+               on the same pre-filled form. -->
           <div class="qr" role="img" aria-label="QR code placeholder">
             <span class="label qr__label">QR code</span>
           </div>
           <p class="label">Open your camera to begin</p>
-
-          <div class="tally">
-            <iframe class="tally__frame" id="tally-frame" loading="lazy" width="100%" height="200" title="Cantu hair assessment"></iframe>
-          </div>
+          <!-- Desktop fallback: nobody scans the screen they are already looking at.
+               JS appends the guest's name as an encoded query param. -->
+          <a class="link-quiet panel__link" id="assessment-link" href="https://tally.so/r/GxGARj" target="_blank" rel="noopener noreferrer">Open the assessment</a>
         </div>
       </div>
     </section>
