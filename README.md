@@ -74,8 +74,8 @@ All editable content is at the top of `js/app.js`:
 - `ASSESSMENT_URL` — the Tally form URL. The guest's name is appended as
   `?name=` (URL-encoded) to the "Open the assessment" link on Page 3.
 
-Everything else — the Page 2 card copy, the four journey steps, the panel —
-is plain text in `index.html`.
+Everything else — the Page 2 card copy, the four journey steps, the panel,
+the footer bar — is plain text in `index.html`.
 
 The invite list is deliberately separate: `js/guests.js` (see "The guest
 list" below).

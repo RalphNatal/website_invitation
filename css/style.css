@@ -564,7 +564,7 @@ dd { margin: 0; }
 }
 
 
-/* 6c. Page 3 — journey, cocktail, panel ----------------------------------- */
+/* 6c. Page 3 — journey, cocktail, panel, footer --------------------------- */
 
 .screen--assess {
   padding-bottom: 0;   /* the panel runs to the bottom edge */
@@ -811,7 +811,6 @@ dd { margin: 0; }
   margin-top: var(--space-9);
   margin-inline: calc(-1 * var(--gutter));
   padding: var(--space-8) var(--gutter);
-  padding-bottom: max(var(--space-8), env(safe-area-inset-bottom));
   background: var(--rust-deep);
   color: var(--ink-light);
   -webkit-font-smoothing: antialiased;
@@ -846,6 +845,60 @@ dd { margin: 0; }
 .panel__link { margin-top: var(--space-2); }
 .panel .link-quiet { color: var(--blush); }
 .panel .link-quiet:hover { color: var(--ink-light); }
+
+/* The footer bar — full-bleed rust, the last thing on the page. Like the
+   panel it breaks out with negative margins against the body width, not
+   100vw, so a scrollbar never adds horizontal scroll. */
+
+.footer {
+  margin-inline: calc(-1 * var(--gutter));
+  padding: var(--space-4) var(--gutter);
+  padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  background: var(--rust);
+  color: var(--ink-light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Outranks .screen--assess .screen__inner, which sets a 6rem row-gap */
+.footer .footer__inner {
+  display: grid;
+  justify-items: center;
+  row-gap: var(--space-2);
+}
+
+.footer__title {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  color: var(--ink-light);
+}
+
+.footer__leaf {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Emblem above the title on narrow screens rather than squeezed beside it */
+@media (max-width: 479.98px) {
+  .footer__title { flex-direction: column; }
+}
+
+.footer__copy {
+  max-width: 52ch;
+  font-size: var(--text--2);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  opacity: 0.85;
+}
 
 
 /* --------------------------------------------------------------------------
