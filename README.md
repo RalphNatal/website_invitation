@@ -22,7 +22,8 @@ npx serve .
 Deploys as a static folder (Vercel: framework preset "Other", no build command,
 output directory `.`).
 
-To test the deep link: `index.html?name=Jasmine`. To return to the gate after
+To test the deep link: `index.html?name=Jasmine`. (The name must be on the
+guest list — see below.) To return to the gate after
 entering a name, close the tab (the name lives in `sessionStorage`, key
 `cantu.guestName`).
 
@@ -31,7 +32,8 @@ entering a name, close the tab (the name lives in `sessionStorage`, key
 ```
 index.html        three <section> screens, all copy, inline SVG (corner sprigs, flow icons)
 css/style.css     tokens, reset, type roles, screens, content, motion
-js/app.js         PRODUCTS / EVENT config, screen toggle, name handling, motion
+js/app.js         PRODUCTS / EVENT config, screen toggle, guest-list gate, motion
+js/guests.js      the invite list (window.CANTU_GUESTS) — loaded before app.js
 assets/           supplied artwork (see below)
 ```
 
@@ -69,6 +71,9 @@ All editable content is at the top of `js/app.js`:
 Everything else — the Page 2 card copy, the five guest-flow steps, the panel —
 is plain text in `index.html`.
 
+The invite list is deliberately separate: `js/guests.js` (see "The guest
+list" below).
+
 ## The QR code
 
 The QR square on the assessment panel is a labelled placeholder. Once the site
@@ -81,12 +86,87 @@ rendered its own dark type, its own cover and heading, asked for the name a
 second time, and showed a required-field error before the guest had typed.
 An iframe's internals are not ours to style, so it opens in a new tab instead.
 
+## The guest list
+
+Page 1 only admits names on the invite list in `js/guests.js`:
+
+```js
+window.CANTU_GUESTS = [
+  'Jasmine Reyes',
+  'Tasha Williams',
+  'Maria Cristina Santos'
+];
+```
+
+A plain array of strings in canonical spelling and casing — that is what the
+invitation displays, not what the guest typed (`jasmine reyes` renders as
+**Jasmine Reyes**).
+
+**Matching.** Both sides are compared on a key that ignores case, accents
+(NFD with combining marks stripped), apostrophes, hyphens, periods and
+spacing, so `maria-cristina santos`, `MARÍA CRISTINA SANTOS` and
+`Maria   Cristina Santos` all hit the same entry. A first name alone is
+accepted when exactly one guest has it; if two or more share it the guest is
+asked for their full name rather than guessed at.
+
+**Messages** (in the `aria-live` line under the input):
+
+| State | Message |
+| --- | --- |
+| Empty, or fails the character rule | Enter the name on your invitation. |
+| Valid characters, not on the list | Your name is not on the guest list. |
+| First name shared by several guests | Enter your full name as it appears on your invitation. |
+
+After three consecutive misses a quieter second line is added: *Check the
+spelling on your invitation.* The counter resets on a successful match.
+
+**The gate applies everywhere a name can come from.** `?name=` in the URL is
+checked against the list on load — a miss lands on Page 1 with the message
+showing, not on Page 2. The `sessionStorage` value is re-checked on every
+load, so editing `guests.js` takes effect immediately: a stored name that no
+longer matches is cleared and the visit starts at Page 1. Only the canonical
+name is ever stored.
+
+**If the list fails to load** — `js/guests.js` missing, `window.CANTU_GUESTS`
+not an array, or the array empty — the gate **fails open**: every name that
+passes the character rule is admitted (title-cased), and a `console.warn`
+says so. A broken deploy should not lock out every guest on the night.
+
+### This is a soft gate, not access control
+
+- Every name on the list is readable in View Source and in this repository.
+- Anyone can edit the array in devtools and walk straight through.
+
+If the list will hold real guests' names, publishing them in a public repo is
+a privacy problem in its own right. Three options:
+
+1. **Accept it.** Fine for a demo or a pitch; not for a live event with real
+   names. *This is what is implemented now.*
+2. **Keep names out of the repo.** Add `js/guests.js` to `.gitignore`, commit a
+   `js/guests.example.js` showing the shape, and drop the real file in at
+   deploy time. No code changes — `app.js` already fails open if the file is
+   absent, so a forgotten deploy step is loud (console warning) rather than a
+   dead site.
+3. **Store SHA-256 hashes instead of names.** Hash the same comparison key
+   (`keyFor()` in `app.js`) with `crypto.subtle.digest('SHA-256', …)` at
+   submit time and compare to a list of hex digests. The list becomes
+   unreadable and matching still works, including first-name-only (hash the
+   first-name keys separately). Trade-off: there is no canonical spelling to
+   display, so Page 2 falls back to title-casing whatever the guest typed.
+   Still bypassable by anyone who reads the code — it hides the list, it
+   does not enforce the gate. Also note `crypto.subtle` requires HTTPS or
+   `localhost`.
+
+Switching to 2 or 3 later is a small change; the lookup is built in one place
+(`buildGuestLookup()`), and one function (`resolveGuest()`) answers for typed
+input, `?name=` and storage alike.
+
 ## Behaviour notes
 
-- **Name rule.** 1–40 characters of letters (any script), combining marks,
-  spaces, hyphens and apostrophes. Input is trimmed, internal whitespace is
-  collapsed, curly apostrophes are straightened, and the result is
-  title-cased. The same rule validates `?name=`.
+- **Character rule.** 1–40 characters of letters (any script), combining
+  marks, spaces, hyphens, apostrophes and periods. Input is trimmed, internal
+  whitespace is collapsed and curly apostrophes are straightened before the
+  guest-list check. The same rule applies to `?name=`.
 - **Reduced motion.** Every animation sits behind
   `@media (prefers-reduced-motion: no-preference)`. With reduced motion on,
   screens change instantly and everything is visible.

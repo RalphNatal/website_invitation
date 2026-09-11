@@ -460,6 +460,15 @@ dd { margin: 0; }
   letter-spacing: 0.04em;
 }
 
+/* Guest-list miss: the message and the underline both turn rust-bright.
+   Character-rule failures keep the taupe message (.is-invalid on the field). */
+.gate__hint--miss .gate__hint-line { color: var(--rust-bright); }
+.gate__field.is-miss .gate__input { border-bottom-color: var(--rust-bright); }
+
+/* After three consecutive misses, a quieter second line */
+.gate__hint-line--quiet,
+.gate__hint--miss .gate__hint-line--quiet { color: var(--taupe); }
+
 .gate__form { row-gap: var(--space-4); }
 .gate__form .link-quiet { margin-top: var(--space-2); }
 

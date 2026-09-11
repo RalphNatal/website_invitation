@@ -32,8 +32,9 @@
   const ASSESSMENT_URL = 'https://tally.so/r/GxGARj';
   const STORAGE_KEY = 'cantu.guestName';
 
-  /* Letters (any script), combining marks, apostrophes, spaces and hyphens; 1–40. */
-  const NAME_PATTERN = /^[\p{L}\p{M}' -]{1,40}$/u;
+  /* Letters (any script), combining marks, apostrophes, periods, spaces and
+     hyphens; 1–40. Periods are allowed so "St. John" reaches the list check. */
+  const NAME_PATTERN = /^[\p{L}\p{M}'. -]{1,40}$/u;
   const NAME_SCALE_FROM = 12;   /* names longer than this step the hero size down */
 
 
@@ -347,6 +348,14 @@
     }
   }
 
+  function clearStoredName() {
+    try {
+      sessionStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      /* nothing to clear */
+    }
+  }
+
   function setGuestName(name) {
     guestName = name;
     const target = document.getElementById('guest-name');
@@ -363,51 +372,159 @@
     if (link) link.href = ASSESSMENT_URL + '?name=' + encodeURIComponent(name);
   }
 
-  /* Page 1 form: validate, store, advance. */
-  function initGate() {
-    const form = document.getElementById('gate-form');
-    const field = document.getElementById('gate-field');
-    const input = document.getElementById('guest-input');
-    const hint = document.getElementById('gate-hint');
 
-    function clearHint() {
-      hint.textContent = '';
-      field.classList.remove('is-invalid');
-      input.removeAttribute('aria-invalid');
+  /* ------------------------------------------------------------------------
+     Guest list — window.CANTU_GUESTS from js/guests.js. A soft gate: the
+     list is readable in the source and editable in devtools (see README).
+     ------------------------------------------------------------------------ */
+
+  const MESSAGES = {
+    invalid:   'Enter the name on your invitation.',
+    unknown:   'Your name is not on the guest list.',
+    ambiguous: 'Enter your full name as it appears on your invitation.',
+    spelling:  'Check the spelling on your invitation.'
+  };
+  const MISSES_BEFORE_HELP = 3;
+
+  const fullLookup = new Map();    /* key → canonical name */
+  const firstLookup = new Map();   /* key of first name → [canonical names] */
+  let gateOpen = false;          /* list failed to load: admit everyone */
+
+  /* Comparison key: trim, collapse whitespace, strip accents (NFD, marks
+     removed), lowercase, drop apostrophes, hyphens and periods — and then
+     drop the spaces too, so "maria-cristina santos", "MARÍA CRISTINA SANTOS"
+     and "Maria   Cristina Santos" are all "mariacristinasantos". */
+  function keyFor(value) {
+    return String(value || '')
+      .trim()
+      .replace(/\s+/g, ' ')
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '')
+      .toLowerCase()
+      .replace(/[.'’‘-]/g, '')
+      .replace(/ /g, '');
+  }
+
+  function buildGuestLookup() {
+    const raw = window.CANTU_GUESTS;
+    const names = Array.isArray(raw)
+      ? raw.filter(function (n) { return typeof n === 'string' && n.trim(); }).map(function (n) { return n.trim(); })
+      : [];
+
+    if (!names.length) {
+      gateOpen = true;
+      console.warn(
+        '[Cantu] Guest list did not load: js/guests.js is missing or window.CANTU_GUESTS is not a non-empty array. ' +
+        'Failing open — every valid name is admitted.'
+      );
+      return;
     }
 
-    input.addEventListener('input', clearHint);
-
-    /* The logo lifts while the input has focus (section 7b) */
-    input.addEventListener('focus', function () { screenEl.gate.classList.add('is-focused'); });
-    input.addEventListener('blur', function () { screenEl.gate.classList.remove('is-focused'); });
-
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-
-      const candidate = normalizeName(input.value);
-      if (!isValidName(candidate)) {
-        hint.textContent = 'Enter the name on your invitation.';
-        field.classList.add('is-invalid');
-        input.setAttribute('aria-invalid', 'true');
-        input.focus();
-        return;
-      }
-
-      const name = titleCase(candidate);
-      storeName(name);
-      setGuestName(name);
-
-      /* Clone the gate while it is still visible (and still focused, so the
-         lifted logo carries over), then dismiss the soft keyboard. */
-      if (motionOK) foldGate(screenEl.gate, input.value);
-      input.blur();
-      showScreen('invite');
+    names.forEach(function (canonical) {
+      fullLookup.set(keyFor(canonical), canonical);
+      const first = keyFor(canonical.split(/\s+/)[0]);
+      if (!firstLookup.has(first)) firstLookup.set(first, []);
+      if (firstLookup.get(first).indexOf(canonical) === -1) firstLookup.get(first).push(canonical);
     });
   }
 
-  /* Name from ?name= wins, then sessionStorage. Both go through the same rule. */
-  function resolveInitialName() {
+  /* One rule for typed input, ?name= and sessionStorage alike.
+     Returns { name } on a match or { error: 'invalid' | 'unknown' | 'ambiguous' }. */
+  function resolveGuest(raw) {
+    const candidate = normalizeName(raw);
+    if (!candidate || !isValidName(candidate)) return { error: 'invalid' };
+    if (gateOpen) return { name: titleCase(candidate) };
+
+    const key = keyFor(candidate);
+    if (fullLookup.has(key)) return { name: fullLookup.get(key) };
+
+    const byFirst = firstLookup.get(key);
+    if (byFirst && byFirst.length === 1) return { name: byFirst[0] };
+    if (byFirst && byFirst.length > 1) return { error: 'ambiguous' };
+
+    return { error: 'unknown' };
+  }
+
+
+  /* ------------------------------------------------------------------------
+     Page 1 form: resolve, store the canonical name, advance.
+     ------------------------------------------------------------------------ */
+
+  const gate = {};   /* elements, filled by initGate */
+  let misses = 0;    /* consecutive guest-list misses */
+
+  function clearGateMessage() {
+    gate.hintMain.textContent = '';
+    gate.hintMore.textContent = '';
+    gate.hintMore.hidden = true;
+    gate.hint.classList.remove('gate__hint--miss');
+    gate.field.classList.remove('is-invalid', 'is-miss');
+    gate.input.removeAttribute('aria-invalid');
+  }
+
+  /* Show one of the three states. Typed text and focus stay in the input. */
+  function showGateError(kind) {
+    clearGateMessage();
+    gate.hintMain.textContent = MESSAGES[kind];
+    gate.input.setAttribute('aria-invalid', 'true');
+
+    if (kind === 'invalid') {
+      gate.field.classList.add('is-invalid');
+    } else {
+      gate.field.classList.add('is-miss');
+      gate.hint.classList.add('gate__hint--miss');
+      misses += 1;
+      if (misses >= MISSES_BEFORE_HELP) {
+        gate.hintMore.textContent = MESSAGES.spelling;
+        gate.hintMore.hidden = false;
+      }
+    }
+
+    gate.input.focus();
+  }
+
+  function admit(name, options) {
+    misses = 0;
+    storeName(name);
+    setGuestName(name);
+    showScreen('invite', options);
+  }
+
+  function initGate() {
+    gate.form = document.getElementById('gate-form');
+    gate.field = document.getElementById('gate-field');
+    gate.input = document.getElementById('guest-input');
+    gate.hint = document.getElementById('gate-hint');
+    gate.hintMain = document.getElementById('gate-hint-main');
+    gate.hintMore = document.getElementById('gate-hint-more');
+
+    gate.input.addEventListener('input', clearGateMessage);
+
+    /* The logo lifts while the input has focus (section 7b) */
+    gate.input.addEventListener('focus', function () { screenEl.gate.classList.add('is-focused'); });
+    gate.input.addEventListener('blur', function () { screenEl.gate.classList.remove('is-focused'); });
+
+    gate.form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const result = resolveGuest(gate.input.value);
+      if (result.error) {
+        showGateError(result.error);
+        return;
+      }
+
+      /* Clone the gate while it is still visible (and still focused, so the
+         lifted logo carries over), then dismiss the soft keyboard. */
+      if (motionOK) foldGate(screenEl.gate, gate.input.value);
+      gate.input.blur();
+      admit(result.name);
+    });
+  }
+
+  /* Decide the opening screen. ?name= is checked against the list first and
+     a miss lands on Page 1 with the message showing; otherwise the stored
+     name is re-checked every load, so an edited guests.js takes effect. */
+  function openingScreen() {
     let fromUrl = null;
     try {
       fromUrl = new URLSearchParams(window.location.search).get('name');
@@ -415,13 +532,29 @@
       fromUrl = null;
     }
 
-    const linked = normalizeName(fromUrl);
-    if (linked && isValidName(linked)) return titleCase(linked);
+    if (fromUrl !== null) {
+      const linked = resolveGuest(fromUrl);
+      if (linked.name) {
+        admit(linked.name, { focus: false });
+        return;
+      }
+      gate.input.value = normalizeName(fromUrl);
+      showScreen('gate', { focus: false });
+      showGateError(linked.error);
+      return;
+    }
 
-    const stored = normalizeName(readStoredName());
-    if (stored && isValidName(stored)) return stored;
+    const stored = readStoredName();
+    if (stored !== null) {
+      const known = resolveGuest(stored);
+      if (known.name) {
+        admit(known.name, { focus: false });
+        return;
+      }
+      clearStoredName();
+    }
 
-    return '';
+    showScreen('gate', { focus: false });
   }
 
 
@@ -438,6 +571,7 @@
     renderProducts();
     document.querySelectorAll('img[data-guard]').forEach(guardImage);
 
+    buildGuestLookup();
     initGate();
 
     /* Any [data-goto] control advances to the named screen. */
@@ -448,14 +582,7 @@
       });
     });
 
-    const name = resolveInitialName();
-    if (name) {
-      storeName(name);
-      setGuestName(name);
-      showScreen('invite', { focus: false });
-    } else {
-      showScreen('gate', { focus: false });
-    }
+    openingScreen();
   }
 
   if (document.readyState === 'loading') {

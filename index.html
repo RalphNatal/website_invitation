@@ -70,7 +70,10 @@
                    autocomplete="name" autocapitalize="words" spellcheck="false" maxlength="40" enterkeyhint="go">
             <span class="gate__underline" aria-hidden="true"></span>
           </div>
-          <p class="gate__hint" id="gate-hint" aria-live="polite"></p>
+          <div class="gate__hint" id="gate-hint" aria-live="polite">
+            <p class="gate__hint-line" id="gate-hint-main"></p>
+            <p class="gate__hint-line gate__hint-line--quiet" id="gate-hint-more" hidden></p>
+          </div>
           <button class="link-quiet" type="submit">Reveal</button>
         </form>
       </div>
@@ -198,6 +201,7 @@
 
   </main>
 
+  <script src="js/guests.js" defer></script>
   <script src="js/app.js" defer></script>
 </body>
 </html>
