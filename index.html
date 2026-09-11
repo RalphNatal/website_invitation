@@ -163,12 +163,12 @@
           <p class="label">Your journey</p>
           <h2 class="display display--sentence panel__title">Start your hair <em>assessment.</em></h2>
           <p class="panel__copy">Scan to begin your personalized Cantu Hair Prescription.</p>
-          <!-- Placeholder. Once the site has a deploy URL this square will encode
-               https://tally.so/r/GxGARj?name={encoded guest name} — the same URL
-               the link below carries — so a phone scan and a desktop click land
-               on the same pre-filled form. -->
-          <div class="qr" role="img" aria-label="QR code placeholder">
-            <span class="label qr__label">QR code</span>
+          <!-- The code is black on transparent, so it sits on a cream tile for
+               scanner contrast. If the image fails the bordered tile stays,
+               labelled, and the link below still works. -->
+          <div class="qr">
+            <img class="qr__img" src="assets/qr.png" width="300" height="300" alt="QR code to the hair assessment" data-guard>
+            <span class="label qr__label" data-fallback hidden>QR code</span>
           </div>
           <p class="label">Open your camera to begin</p>
           <!-- Desktop fallback: nobody scans the screen they are already looking at.

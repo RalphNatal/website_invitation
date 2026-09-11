@@ -1011,13 +1011,24 @@ dd { margin: 0; }
   font-weight: 300;
 }
 
+/* A cream tile with quiet zone: the code is black on transparent and a
+   scanner needs light around it, which the rust panel cannot give. */
 .qr {
   display: grid;
   place-items: center;
   width: 180px;
   height: 180px;
+  padding: var(--space-3);
   margin-block: var(--space-3);
+  background: var(--cream);
   border: 1px solid var(--blush);
+}
+
+.qr__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;   /* keep the modules crisp when scaled */
 }
 
 .qr__label { color: var(--taupe); }

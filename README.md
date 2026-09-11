@@ -47,6 +47,7 @@ never broken without them.
 | `assets/logo-cantu.png` | The cantu® wordmark, 750 × 332 | Text wordmark set in Jost |
 | `assets/leaf.png` | Corner leaf emblem, 560 × 446, painted cream through a CSS mask | Hidden where `mask-image` is unsupported |
 | `assets/paper-texture.png` | Gate background, 1672 × 941, blended into `--rust-deep` | `--rust-deep` flat fill |
+| `assets/qr.png` | Assessment QR code, 300 × 300, on a cream tile | Bordered tile with a "QR code" label |
 | `assets/products/curl-cream.png` | Cantu Ultra Moisture Nourishing Curl Cream | CSS jar silhouette |
 | `assets/products/mask.png` | Cantu Ultra Moisture Nourishing Mask | CSS jar silhouette |
 | `assets/products/shampoo.png` | Cantu Ultra Moisture Nourishing Shampoo | CSS bottle silhouette |
