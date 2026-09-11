@@ -53,6 +53,8 @@
 
     <!-- 2 · The invitation -->
     <section class="screen screen--invite" id="screen-invite" aria-labelledby="invite-title" hidden>
+      <!-- The card sits centred in the body; the footer bar runs full-bleed below it -->
+      <div class="invite__body">
       <article class="card">
         <div class="card__group" data-reveal>
           <p class="label">Your hair prescription</p>
@@ -81,6 +83,18 @@
 
         <button class="link-quiet" type="button" data-goto="assess" data-reveal>Continue</button>
       </article>
+      </div>
+
+      <!-- The same footer bar as Page 3 -->
+      <footer class="footer">
+        <div class="screen__inner footer__inner" data-reveal>
+          <p class="label footer__title">
+            <svg class="footer__leaf" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20c0-9 6-15 16-16-1 10-7 16-16 16z"/><path d="M4 20 14 10"/></svg>
+            <span>Meet your hair cocktail ingredients.</span>
+          </p>
+          <p class="footer__copy">Every step deepens the relationship and makes each guest feel seen, heard, and celebrated</p>
+        </div>
+      </footer>
     </section>
 
     <!-- 3 · Assessment & hair cocktail -->
@@ -177,8 +191,7 @@
         </div>
       </div>
 
-      <!-- d) Footer bar — full-bleed, this screen only. On the gate and the
-           card it would collide with REAL CARE. REAL PEOPLE. REAL TALK. -->
+      <!-- d) Footer bar — full-bleed, the same bar as Page 2. Not on the gate. -->
       <footer class="footer">
         <div class="screen__inner footer__inner" data-reveal>
           <p class="label footer__title">

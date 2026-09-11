@@ -305,10 +305,20 @@ body[data-screen="gate"] { background: var(--rust-deep); }
 
 /* 5b. Page 2 — the invitation --------------------------------------------- */
 
+/* Two rows: the card centred in whatever height is left, then the footer
+   bar full-bleed at the foot. The screen's own padding moves onto the body
+   so the bar can reach the edges. */
 .screen--invite {
   display: grid;
-  place-items: center;
+  grid-template-rows: 1fr auto;
+  padding: 0;
   background: var(--sand);
+}
+
+.invite__body {
+  display: grid;
+  place-items: center;
+  padding: var(--space-8) var(--gutter);
 }
 
 .card {
@@ -1038,7 +1048,7 @@ dd { margin: 0; }
 .panel .link-quiet { color: var(--blush); }
 .panel .link-quiet:hover { color: var(--ink-light); }
 
-/* The footer bar — full-bleed rust, the last thing on the page. Spans the
+/* The footer bar — full-bleed rust, the last thing on Pages 2 and 3. Spans the
    screen naturally (no side padding there), never 100vw, so a scrollbar
    never adds horizontal scroll. */
 
