@@ -30,10 +30,10 @@
   ];
 
   const EVENT = {
-    /* TODO: June 21, 2024 has passed — value kept verbatim from the deck until the client confirms the new date. */
-    date:     'June 21, 2024',
-    time:     '6:00 — 9:00 PM',   /* true em dash (U+2014), never a hyphen */
-    location: 'New York City'
+    /* TODO: September 28, 2026 has passed — value kept verbatim from the deck until the client confirms the new date. */
+    date:     'September 28, 2026',
+    time:     '3:00 — 7:00 PM',   /* true em dash (U+2014), never a hyphen */
+    location: 'Damian West Salon 237 W 4th St, New York, NY 10014'
   };
 
   /* The assessment form. The guest's name is appended as ?name= (encoded). */

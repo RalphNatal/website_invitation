@@ -583,13 +583,14 @@ dd { margin: 0; }
   display: grid;
   row-gap: var(--space-1);
   justify-items: center;
+  align-content: start;  /* values share a baseline with the first line of the location */
 }
 
 .event__key { color: var(--taupe); }
 
 .event__value {
   font-size: var(--text-0);
-  color: var(--rust);
+  color: var(--rust);  /* the deck's values sit a little higher than the keys */
 }
 
 @media (min-width: 640px) {
