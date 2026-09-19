@@ -541,10 +541,16 @@ dd { margin: 0; }
   line-height: var(--leading-body);
 }
 
-.card__title span { display: inline; }
-
-@media (max-width: 479.98px) {
-  .card__title span { display: block; }
+/* The headline runs to 39 characters set in uppercase Playfair, so it gets
+   its own fluid size rather than the flat .display step, and balances its own
+   line breaks. The em-based measure keeps it to 2-3 lines at every width:
+   Playfair caps are far wider than its digits, so ch would under-measure. */
+.card__title {
+  font-size: clamp(1.5rem, 5.6vw, var(--text-4));
+  line-height: 1.12;
+  margin-bottom: var(--space-2);
+  max-width: 13em;
+  text-wrap: balance;
 }
 
 .guest-name-wrap {
