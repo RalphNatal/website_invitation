@@ -1,8 +1,8 @@
 /* ==========================================================================
    The Cantu Collective — invitation
    Vanilla CSS, mobile-first (designed at 390px). Desktop is the same centred
-   column, never wider than --measure, except the journey and product rows,
-   which sit in a --measure-wide band. Stationery, not a web layout.
+   column, never wider than --measure, except the journey steps, which sit
+   in a --measure-wide band. Stationery, not a web layout.
    ========================================================================== */
 
 
@@ -14,7 +14,7 @@
   /* Palette — sampled from the client deck. This is the whole set. */
   --rust-deep:   #712312;   /* deep brick — Page 1 + QR panel background */
   --rust:        #8A3624;   /* primary text + rules on cream */
-  --rust-bright: #9C3618;   /* small accent: journey titles, product names only */
+  --rust-bright: #9C3618;   /* small accent: journey step titles only    */
   --cream:       #FDF7F1;   /* invitation card stock */
   --sand:        #F1E2D5;   /* warm section background */
   --blush:       #DE9078;   /* hairlines, thin frames */
@@ -347,7 +347,7 @@ body[data-screen="gate"] { background: var(--rust-deep); }
 }
 
 
-/* 5c. Page 3 — assessment & hair cocktail --------------------------------- */
+/* 5c. Page 3 — the journey & assessment ---------------------------------- */
 
 .screen--assess {
   background: var(--sand);
@@ -541,10 +541,16 @@ dd { margin: 0; }
   line-height: var(--leading-body);
 }
 
-.card__title span { display: inline; }
-
-@media (max-width: 479.98px) {
-  .card__title span { display: block; }
+/* The headline runs to 39 characters set in uppercase Playfair, so it gets
+   its own fluid size rather than the flat .display step, and balances its own
+   line breaks. The em-based measure keeps it to 2-3 lines at every width:
+   Playfair caps are far wider than its digits, so ch would under-measure. */
+.card__title {
+  font-size: clamp(1.5rem, 5.6vw, var(--text-4));
+  line-height: 1.12;
+  margin-bottom: var(--space-2);
+  max-width: 13em;
+  text-wrap: balance;
 }
 
 .guest-name-wrap {
@@ -601,14 +607,20 @@ dd { margin: 0; }
 }
 
 
-/* 6c. Page 3 — journey, cocktail, panel, footer --------------------------- */
+/* 6c. Page 3 — journey, panel, footer ------------------------------------ */
 
 /* No side padding on this screen: the wide bands measure against the
    viewport, the narrow column carries its own gutter, and the panel and
    footer span the width without negative margins. */
 .screen--assess {
+  /* Three rows: the steps take the height that is left, then the footer bar
+     and the panel sit at the foot. With the product strip gone the content no
+     longer fills a tall viewport on its own, and this keeps the page from
+     trailing off into bare sand. */
+  display: grid;
+  grid-template-rows: 1fr auto auto;
   padding-inline: 0;
-  padding-bottom: 0;   /* the footer runs to the bottom edge */
+  padding-bottom: 0;   /* the panel runs to the bottom edge */
 }
 
 .screen--assess .screen__inner {
@@ -618,7 +630,9 @@ dd { margin: 0; }
 
 .assess__content {
   display: grid;
+  align-content: center;
   row-gap: var(--space-7);
+  padding-block: var(--space-4) var(--space-8);
 }
 
 /* The column's gutter, now that the screen has none */
@@ -630,20 +644,26 @@ dd { margin: 0; }
 .block {
   display: grid;
   justify-items: center;
-  row-gap: var(--space-5);
+  row-gap: var(--space-7);
+}
+
+/* The steps are the whole of this page now, so the heading above them takes
+   a step up the scale rather than sharing .display with the Page 2 card. */
+.block__title {
+  font-size: clamp(var(--text-4), 5vw, var(--text-5));
 }
 
 /* The journey — a column at every width, never a row */
 
 .journey {
-  --journey-col:  72px;              /* the icon column */
-  --journey-icon: 56px;              /* the circle inside it */
-  --journey-gap:  var(--space-5);    /* between steps; the connector spans it */
+  --journey-col:  96px;              /* the icon column */
+  --journey-icon: 76px;              /* the circle inside it */
+  --journey-gap:  var(--space-7);    /* between steps; the connector spans it */
 
   display: grid;
   row-gap: var(--journey-gap);
   width: 100%;
-  max-width: 34rem;
+  max-width: 38rem;
   margin-inline: auto;
   text-align: left;
 }
@@ -652,7 +672,7 @@ dd { margin: 0; }
   position: relative;
   display: grid;
   grid-template-columns: var(--journey-col) 1fr;
-  column-gap: var(--space-4);
+  column-gap: var(--space-5);
   align-items: start;
 }
 
@@ -700,8 +720,8 @@ dd { margin: 0; }
 }
 
 .journey__icon svg {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.2;
@@ -711,35 +731,43 @@ dd { margin: 0; }
 
 .journey__text {
   display: grid;
-  row-gap: var(--space-1);
+  row-gap: var(--space-2);
 }
 
 .journey__num {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: var(--text-3);
+  font-size: var(--text-4);
   line-height: 1;
   color: var(--rust);
 }
 
-.journey__title { color: var(--rust-bright); }
+/* A step up from .label: these are the page headings now, not captions. */
+.journey__title {
+  font-size: var(--text-0);
+  color: var(--rust-bright);
+}
 
 .journey__copy {
-  max-width: 26ch;
-  font-size: var(--text--1);
+  max-width: 34ch;
+  font-size: var(--text-0);
   font-weight: 400;
   line-height: var(--leading-body);
   color: var(--rust);
 }
 
-/* From 768px the journey is a row: four stacked, centred steps joined by one
+/* From 1024px the journey is a row: four stacked, centred steps joined by one
    horizontal rule. The vertical connector above is switched off here and
-   the horizontal one exists only here, so the two never draw together. */
-@media (min-width: 768px) {
+   the horizontal one exists only here, so the two never draw together.
+
+   The row used to start at 768px. At the larger step size four columns are
+   cramped there, so the tablet range keeps the vertical timeline, which has
+   the room for it — this page is nothing but these steps now. */
+@media (min-width: 1024px) {
   .journey {
     position: relative;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-5);
+    gap: var(--space-6);
     max-width: none;
     text-align: center;
   }
@@ -764,7 +792,7 @@ dd { margin: 0; }
   .journey__step {
     grid-template-columns: none;
     justify-items: center;
-    row-gap: var(--space-3);
+    row-gap: var(--space-4);
   }
 
   /* Vertical connector off */
@@ -773,7 +801,7 @@ dd { margin: 0; }
   /* The ::after becomes a right-pointing chevron, centred in the gap */
   .journey__step:not(:last-child)::after {
     top: calc(var(--journey-icon) / 2);
-    right: calc(-1 * var(--space-5) / 2);
+    right: calc(-1 * var(--space-6) / 2);
     bottom: auto;
     left: auto;
     transform: translate(50%, -50%) rotate(-45deg);
@@ -783,209 +811,15 @@ dd { margin: 0; }
 
   .journey__text { justify-items: center; }
 
+  /* Two of the four titles wrap to a second line in a quarter of the band.
+     Reserving two lines for all of them keeps the copy below on one baseline
+     instead of stepping up and down across the row. */
+  .journey__title { min-height: calc(2em * var(--leading-body)); }
+
   .journey__copy {
     max-width: 24ch;
     margin-inline: auto;
   }
-}
-
-/* Your hair cocktail */
-
-.cocktail {
-  --product-box: 110px;   /* the image box; the silhouette shares it */
-}
-
-.cocktail__intro {
-  display: grid;
-  justify-items: center;
-  row-gap: var(--space-3);
-}
-
-.cocktail__label { color: var(--taupe); }
-
-/* The one-line range intro under the heading */
-.cocktail__copy {
-  max-width: 34ch;
-  font-weight: 300;
-  color: var(--rust);
-}
-
-/* Every cell is the same at every width: image on the left, name over blurb
-   on the right, the pair centred on each other. One column below 640px, a
-   2 × 2 from 640px, four across from 1024px inside the wide band. Cells are
-   separated by a dotted rule — between columns where there are columns,
-   between rows on the single column. */
-.products {
-  --divider-gap: var(--space-5);   /* space either side of the dotted rule */
-  display: grid;
-  grid-template-columns: 1fr;
-  width: 100%;
-  text-align: left;
-  padding-bottom: 2rem;
-}
-
-.product {
-  position: relative;
-  display: grid;
-  grid-template-columns: var(--product-box) 1fr;
-  grid-template-areas:
-    "media name"
-    "media blurb";
-  column-gap: var(--space-4);
-  row-gap: var(--space-2);
-  align-items: center;
-  align-content: center;
-  padding-block: var(--divider-gap);
-}
-
-/* The dotted rule: spaced round dots, not the browser's dotted border, which
-   packs them edge to edge. Horizontal by default, between stacked cells. */
-.product + .product::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background-image: radial-gradient(circle, var(--blush) 1.2px, transparent 1.4px);
-  background-size: 9px 3px;
-  background-repeat: repeat-x;
-  pointer-events: none;
-}
-
-/* A fixed box, so the bottles line up whatever their intrinsic ratios and
-   nothing moves when the PNG lands. */
-.product__media {
-  grid-area: media;
-  display: grid;
-  /* The single track is pinned to the box: an auto track would grow to the
-     image's intrinsic size and the image's max-height: 100% would resolve
-     against that, not the box. */
-  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
-  place-items: center;
-  width: 100%;
-  height: var(--product-box);
-}
-
-.product__media img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-}
-
-.product__name {
-  grid-area: name;
-  align-self: end;
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: var(--text--2);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  line-height: var(--leading-body);
-  color: var(--rust-bright);
-}
-
-.product__blurb {
-  grid-area: blurb;
-  align-self: start;
-  font-size: var(--text--2);
-  font-weight: 400;
-  line-height: var(--leading-body);
-  color: var(--rust);
-}
-
-/* Columns from 640px: the rule turns vertical and sits between neighbours */
-@media (min-width: 640px) {
-  .cocktail { --product-box: 140px; }
-
-  .products {
-    grid-template-columns: repeat(2, 1fr);
-    row-gap: var(--divider-gap);
-  }
-
-  .product {
-    padding-block: 0;
-    padding-inline: var(--divider-gap);
-  }
-
-  .product + .product::before {
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    height: auto;
-    background-size: 3px 9px;
-    background-repeat: repeat-y;
-  }
-
-  /* First cell of each row has no neighbour to its left */
-  .product:nth-child(2n + 1)::before { content: none; }
-}
-
-@media (min-width: 1024px) {
-  /* Four cells share the band: a smaller box and tighter rule padding keep
-     the text column wide enough for the copy */
-  .cocktail { --product-box: 110px; }
-
-  .products {
-    --divider-gap: var(--space-4);
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .product { column-gap: var(--space-3); }
-
-  .product:nth-child(2n + 1)::before { content: ""; }
-  .product:nth-child(4n + 1)::before { content: none; }
-}
-
-/* CSS silhouette shown when a product image cannot load. Same box as the image. */
-.product__fallback {
-  display: grid;
-  place-items: center;
-  width: var(--product-box);
-  height: 100%;
-  background: var(--cream);
-}
-
-.bottle {
-  position: relative;
-  display: block;
-  width: var(--b-w);
-  height: var(--b-h);
-  margin-top: var(--c-h);   /* keeps body + cap visually centred */
-  border-radius: var(--b-r);
-  background: var(--sand);
-}
-
-.bottle::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 100%;
-  width: var(--c-w);
-  height: var(--c-h);
-  transform: translateX(-50%);
-  border-radius: var(--c-r, 3px 3px 0 0);
-  background: var(--sand);
-}
-
-/* Sized to the 110px box: tall bottle, squat jar, short wide jar */
-.bottle--bottle   { --b-w: 32px; --b-h: 72px; --b-r: 10px 10px 6px 6px; --c-w: 13px; --c-h: 13px; }
-.bottle--jar      { --b-w: 54px; --b-h: 42px; --b-r: 5px 5px 9px 9px;   --c-w: 50px; --c-h: 12px; --c-r: 4px 4px 0 0; }
-.bottle--jar-wide { --b-w: 64px; --b-h: 30px; --b-r: 4px 4px 8px 8px;   --c-w: 60px; --c-h: 9px;  --c-r: 3px 3px 0 0; }
-
-/* A squeeze tube stands on its cap: crimped flat top, tapering into the cap. */
-.bottle--tube {
-  --b-w: 30px; --b-h: 68px; --b-r: 3px 3px 15px 15px / 3px 3px 46px 46px; --c-w: 16px; --c-h: 10px;
-  margin-top: 0;
-  margin-bottom: var(--c-h);
-}
-
-.bottle--tube::before {
-  bottom: auto;
-  top: 100%;
-  border-radius: 0 0 2px 2px;
 }
 
 /* The panel */
@@ -1040,14 +874,14 @@ dd { margin: 0; }
 .panel .link-quiet { color: var(--blush); }
 .panel .link-quiet:hover { color: var(--ink-light); }
 
-/* The footer bar — full-bleed rust, the last thing on Pages 2 and 3. Spans the
+/* The footer bar — full-bleed rust, between the steps and the QR panel. Spans the
    screen naturally (no side padding there), never 100vw, so a scrollbar
    never adds horizontal scroll. */
 
 .footer {
   margin-inline: 0;
-  padding: var(--space-4) var(--gutter);
-  padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  padding: var(--space-6) var(--gutter);
+  padding-bottom: max(var(--space-6), env(safe-area-inset-bottom));
   background: var(--rust);
   color: var(--ink-light);
   -webkit-font-smoothing: antialiased;
@@ -1061,37 +895,15 @@ dd { margin: 0; }
   row-gap: var(--space-2);
 }
 
-.footer__title {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-2) var(--space-3);
-  color: var(--ink-light);
-}
-
-.footer__leaf {
-  width: 16px;
-  height: 16px;
-  flex: none;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* Emblem above the title on narrow screens rather than squeezed beside it */
-@media (max-width: 479.98px) {
-  .footer__title { flex-direction: column; }
-}
-
+/* This line is the only thing in the bar now that the ingredients title has
+   gone, so it is sized as a closing statement rather than as a caption
+   beneath one. */
 .footer__copy {
-  max-width: 52ch;
-  font-size: var(--text--2);
-  font-weight: 400;
+  max-width: 44ch;
+  font-size: var(--text-0);
+  font-weight: 300;
   line-height: var(--leading-body);
-  opacity: 0.85;
+  opacity: 0.92;
 }
 
 
