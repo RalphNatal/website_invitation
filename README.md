@@ -2,9 +2,8 @@
 
 A single-page, three-screen invitation for the Cantu Collective event. A guest
 signs their name on the gate, the invitation unfolds, and the assessment page
-carries the four-step journey, the hair cocktail products, and the way into the
-hair assessment — a QR code, plus a link for desktop — with their name
-already in the URL.
+carries the four-step journey and the way into the hair assessment — a QR
+code, plus a link for desktop — with their name already in the URL.
 
 Vanilla HTML, CSS and JavaScript. No build step, no bundler, no npm install.
 The only external resource loaded is Google Fonts. The assessment itself is
@@ -32,7 +31,7 @@ entering a name, close the tab (the name lives in `sessionStorage`, key
 ```
 index.html        three <section> screens, all copy, inline SVG (journey icons)
 css/style.css     tokens, reset, type roles, screens, content, motion
-js/app.js         PRODUCTS / EVENT config, screen toggle, guest-list gate, motion
+js/app.js         EVENT config, screen toggle, guest-list gate, motion
 js/guests.js      the invite list (window.CANTU_GUESTS) — loaded before app.js
 assets/           supplied artwork (see below)
 ```
@@ -48,30 +47,17 @@ never broken without them.
 | `assets/leaf.png` | Corner leaf emblem, 560 × 446, painted cream through a CSS mask | Hidden where `mask-image` is unsupported |
 | `assets/paper-texture.png` | Gate background, 1672 × 941, blended into `--rust-deep` | `--rust-deep` flat fill |
 | `assets/qr.png` | Assessment QR code, 300 × 300, on a cream tile | Bordered tile with a "QR code" label |
-| `assets/products/curl-cream.png` | Cantu Ultra Moisture Nourishing Curl Cream | CSS jar silhouette |
-| `assets/products/mask.png` | Cantu Ultra Moisture Nourishing Mask | CSS jar silhouette |
-| `assets/products/shampoo.png` | Cantu Ultra Moisture Nourishing Shampoo | CSS bottle silhouette |
-| `assets/products/leave-in-conditioner.png` | Cantu Ultra Moisture Nourishing Leave-In Conditioner | CSS bottle silhouette |
 
-Product PNGs: transparent background, 1000 × 1000px. Each cell is image left,
-text right, with a fixed-height image box (110px, 140px in the 2 × 2 from 640px,
-110px four-up from 1024px) and `object-fit: contain`, so nothing shifts when a
-file lands. Filenames are lowercase slugs —
-the deploy filesystem is case-sensitive and spaces would need encoding.
-
+`assets/products/` still holds the four Ultra Moisture packshots. Nothing
+references them since the product strip was removed from the journey page;
+they are kept on disk pending the Shea Butter decision, not deleted.
 
 ## Where the content lives
 
 All editable content is at the top of `js/app.js`:
 
-- `PRODUCTS` — full product name (the label, also used as `alt`), blurb,
-  image path, and `shape` (`bottle` | `jar` | `jar-wide` | `tube`) for the
-  CSS fallback. The previous Ultra Moisture line sits commented out directly
-  above it. The one-line intro under the strip heading is a `TODO` in
-  `index.html` — the old Batana Oil line was Ultra Moisture copy and does
-  not apply to the Shea Butter range.
 - `EVENT` — `date`, `time`, `location`. The time uses a true em dash.
-  The date is still the deck's **June 21, 2024**, marked with a `TODO` —
+  The date is still the deck's **September 28, 2026**, marked with a `TODO` —
   it has not been replaced with an invented one.
 - `ASSESSMENT_URL` — the Tally form URL. The guest's name is appended as
   `?name=` (URL-encoded) to the "Open the assessment" link on Page 3.

@@ -8,26 +8,8 @@
   'use strict';
 
   /* ------------------------------------------------------------------------
-     Editable content — product names, blurbs, image paths and event details
-     live here and nowhere else. `name` is both the label and the alt text.
-     `shape` picks the CSS silhouette used if an image cannot load:
-     'bottle' | 'jar' | 'jar-wide' | 'tube'.
+     Editable content — the event details live here and nowhere else.
      ------------------------------------------------------------------------ */
-
-  const PRODUCTS = [
-    { name: 'Cantu Ultra Moisture Nourishing Curl Cream',
-      blurb: 'Defines and hydrates curls while smoothing frizz, boosting shine, and providing a soft, flexible hold.',
-      src: 'assets/products/curl-cream.png', shape: 'jar' },
-    { name: 'Cantu Ultra Moisture Nourishing Mask',
-      blurb: 'Deeply nourishes dry curls while restoring softness, strengthening strands, and reducing breakage.',
-      src: 'assets/products/mask.png', shape: 'jar' },
-    { name: 'Cantu Ultra Moisture Nourishing Shampoo',
-      blurb: 'Gently cleanses without stripping moisture while strengthening strands and leaving curls soft and hydrated.',
-      src: 'assets/products/shampoo.png', shape: 'bottle' },
-    { name: 'Cantu Ultra Moisture Nourishing Leave-In Conditioner',
-      blurb: 'Provides lightweight, lasting hydration while smoothing frizz, strengthening strands, and enhancing shine.',
-      src: 'assets/products/leave-in-conditioner.png', shape: 'bottle' }
-  ];
 
   const EVENT = {
     /* TODO: September 28, 2026 has passed — value kept verbatim from the deck until the client confirms the new date. */
@@ -281,38 +263,6 @@
       const item = el('div', 'event__item');
       item.appendChild(el('dt', 'label event__key', pair[0]));
       item.appendChild(el('dd', 'event__value', pair[1]));
-      list.appendChild(item);
-    });
-  }
-
-  function renderProducts() {
-    const list = document.getElementById('products');
-    if (!list) return;
-
-    PRODUCTS.forEach(function (product) {
-      const item = el('li', 'product');
-      const media = el('div', 'product__media');
-
-      const img = document.createElement('img');
-      img.src = product.src;
-      img.alt = product.name;
-      img.loading = 'lazy';
-      img.decoding = 'async';
-      img.setAttribute('data-guard', '');
-
-      const fallback = el('div', 'product__fallback');
-      fallback.hidden = true;
-      fallback.setAttribute('data-fallback', '');
-      fallback.setAttribute('aria-hidden', 'true');
-      fallback.appendChild(el('span', 'bottle bottle--' + product.shape));
-
-      media.appendChild(img);
-      media.appendChild(fallback);
-
-      /* Media, name and blurb are direct children, placed by grid areas */
-      item.appendChild(media);
-      item.appendChild(el('p', 'product__name', product.name));
-      item.appendChild(el('p', 'product__blurb', product.blurb));
       list.appendChild(item);
     });
   }
@@ -581,7 +531,6 @@
     });
 
     renderEvent();
-    renderProducts();
     document.querySelectorAll('img[data-guard]').forEach(guardImage);
 
     buildGuestLookup();
