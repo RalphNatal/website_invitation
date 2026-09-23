@@ -85,6 +85,7 @@
 
   const REVEAL_STAGGER = 200;   /* ms between blocks revealed together */
   const REVEAL_SAFETY = 3000;   /* ms before anything still hidden in view is forced visible */
+  const INK_SAFETY = 2100;      /* ms: the ink's 300ms delay + 1600ms wipe, plus headroom */
 
   function domOrder(a, b) {
     return (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1;
@@ -153,13 +154,40 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
+  /* The guest name's ink mask comes off once the wipe lands (section 7d).
+     animationend can go missing — off-screen, or motion settings changed
+     mid-run — so a timeout backs it up; adding the class twice is harmless.
+     Without an entrance the class goes on at once: no animation, no mask. */
+  function inkName(section, animated) {
+    const name = section.querySelector('.guest-name');
+    if (!name) return;
+
+    function settle() { name.classList.add('is-inked'); }
+
+    if (!animated) {
+      settle();
+      return;
+    }
+
+    name.addEventListener('animationend', function (event) {
+      if (event.animationName === 'ink-arrive' || event.animationName === 'ink-clip') settle();
+    });
+    setTimeout(settle, INK_SAFETY);
+  }
+
   /* Entrance for Pages 2 and 3. Runs once per screen. */
   function enterScreen(section) {
-    if (!motionOK || !section || section.dataset.entered) return;
+    if (!section || section.dataset.entered) return;
+
+    if (!motionOK) {
+      inkName(section, false);
+      return;
+    }
     section.dataset.entered = 'true';
 
     /* Applied synchronously so the first paint already holds the start state. */
     section.classList.add('is-entering');
+    inkName(section, true);
 
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
